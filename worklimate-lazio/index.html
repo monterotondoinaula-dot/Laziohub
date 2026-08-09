@@ -59,7 +59,10 @@
       <h1 id="pageTitle">Rischio da stress da caldo — comuni del Lazio</h1>
       <p class="subtitle" id="pageSubtitle">Dati Worklimate (fascia oraria 12–16). Un valore per comune al giorno, non una superficie continua.</p>
     </div>
-    <button class="theme-toggle" id="themeToggle" type="button"></button>
+    <div class="header-actions">
+      <a class="home-button" href="https://monterotondoinaula-dot.github.io/Laziohub/" title="Torna a Laziohub">← Laziohub</a>
+      <button class="theme-toggle" id="themeToggle" type="button"></button>
+    </div>
   </div>
 
   <div class="locate-row" id="locateRow">
@@ -158,7 +161,7 @@
       <p>Chiama gli endpoint pubblici app.worklimate.it (<code>osm-stazioni.php</code>): trova la cella della griglia meteo più vicina a ogni comune (via centroide lat/lon), fa dedup delle celle, interroga il rischio per cella (g1/g2/g3 = oggi/domani/dopodomani) e fa il join comune → cella → rischio.</p>
 
       <h3>Possibili rischi</h3>
-      <p>Se un utente legge "Latina: alto" senza capire come è stato calcolato, può fare un ragionamento sbagliato tipo "quindi oggi a Latina nessuno può lavorare all'aperto". Ma non è così semplice.</p>
+      <p>Se un utente legge "Ragusa: alto" senza capire come è stato calcolato, può fare un ragionamento sbagliato tipo "quindi oggi a Ragusa nessuno può lavorare all'aperto". Ma non è così semplice.</p>
       <p>La norma regionale non fa riferimento al sito Worklimate in generale, fa riferimento a una sezione specifica: quella per i lavoratori, quella sulle ore centrali (le 12-16 diciamo), quella che genera divieto di lavoro all'aperto. E l'output ufficiale di quella sezione sono mappe PNG statiche.</p>
       <p>I dati usati per costruire la tabella non arrivano dalla fonte normativa, ma da un'altra via — le chiamate API — che porta a un'informazione comparabile, ma che tecnicamente parlando "non fa legge". Chi fa legge è la mappa PNG di quella sezione specifica: <a href="https://www.worklimate.it/scelta-mappa/sole-attivita-fisica-alta/" target="_blank" rel="noopener">worklimate.it/scelta-mappa/sole-attivita-fisica-alta</a>.</p>
       <p>@aborruso ha chiesto conferma al CNR se il risultato delle chiamate API (alto/medio/basso via geocoding sul punto più vicino) fosse paragonabile al risultato della sezione ufficiale con le PNG. Loro hanno confermato: sì, è comparabile, quando l'API dice "alto" corrisponde al giorno in cui scatta il divieto secondo la sezione ufficiale.</p>
@@ -169,7 +172,7 @@
   <footer>
     <span id="updatedNote"></span> <span id="freshnessBadge" class="freshness-badge"></span><br>
     Fonte: <a href="https://app.worklimate.it" target="_blank" rel="noopener">app.worklimate.it</a> via endpoint pubblico <code>osm-stazioni.php</code> (repo <a href="https://github.com/aborruso/worklimate" target="_blank" rel="noopener">aborruso/worklimate</a>, strumenti open source non ufficiali per interrogare i dati di rischio da stress termico di Worklimate/protezione civile). Coordinate comuni: centroidi da confini amministrativi ISTAT (openpolis/geojson-italy). Aggiornato automaticamente ogni giorno via GitHub Actions.<br>
-    Fork del progetto <a href="https://github.com/PalermoHub/worklimate" target="_blank" rel="noopener">worklimate</a> realizzato da OpenDataSicilia/PalermoHub per la Sicilia, adattato da steamaglione ai comuni del Lazio.
+    Fork del progetto <a href="https://github.com/PalermoHub/worklimate" target="_blank" rel="noopener">worklimate</a> realizzato da OpenDataSicilia/PalermoHub per la Sicilia, adattato ai comuni del Lazio.
   </footer>
 </div>
 
