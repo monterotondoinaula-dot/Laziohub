@@ -1,0 +1,465 @@
+
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+
+<title>Mappa Bivariata temperatura e precipitazioni e deficit idrico Lazio 1950-2025 | Comuni</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+      integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous"/>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+        integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/pmtiles@3.2.1/dist/pmtiles.js"
+        integrity="sha384-QfbOCebHNw8pQiPAOd2IFee2v2A5VYZxBk0+JGZ5H+3mfzVIp6zsQNkTsfGJot93" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"/>
+		
+    <meta name="description" content="Mappa bivariata interattiva di temperatura e precipitazioni per i 378 comuni del Lazio, dati TerraClimate 1950-2025 mese per mese. Confronta clima caldo/freddo e secco/piovoso comune per comune.">
+    <meta name="keywords" content="Lazio, climate change, clima, temperatura, precipitazioni, mappa bivariata, comuni lazio, TerraClimate, dati climatici, cambiamento climatico, Open Data">
+    <meta name="author" content="Adattamento Laziohub su progetto originale di Giovan Battista Vitrano per OpenDataSicilia.it">
+    <meta http-equiv="content-language" content="IT">
+    <meta name="robots" content="index,follow">
+    <meta name="creation_Date" content="24/07/2026">
+    <link rel="shortcut icon" href="img/favicon.ico"/>
+    <link rel="icon" href="img/favicon.png" type="image/png"/>		
+	<link rel="stylesheet" href="css/app.css?v=20260726c"/>
+
+    <!-- Meta tags per social sharing pen Graph Protocol -->
+    <meta property="og:url" content="https://monterotondoinaula-dot.github.io/Laziohub/lazio-climate-change/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mappa Bivariata temperatura e precipitazioni e deficit idrico Lazio 1950-2025 | Comuni">
+    <meta property="og:description" content="Laziohub - Contenitore di mappe ed analisi del territorio del Lazio">
+    <meta property="og:image" content="https://monterotondoinaula-dot.github.io/Laziohub/lazio-climate-change/img/social_card.jpg">
+	<!-- twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="monterotondoinaula-dot.github.io">
+    <meta property="twitter:url" content="https://monterotondoinaula-dot.github.io/Laziohub/lazio-climate-change/">
+    <meta name="twitter:title" content="Mappa Bivariata temperatura e precipitazioni e deficit idrico Lazio 1950-2025 | Comuni">
+    <meta name="twitter:description" content="Laziohub - Contenitore di mappe ed analisi del territorio del Lazio">
+    <meta name="twitter:image" content="https://monterotondoinaula-dot.github.io/Laziohub/lazio-climate-change/img/social_card.jpg"> 
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KHR1GHDRQS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-KHR1GHDRQS');
+</script>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="map2"></div>
+<div id="comune-tooltip"></div>
+<div id="map-loader"><div class="map-loader-spinner"></div><span>Caricamento dati...</span></div>
+<div id="compare-divider">
+  <div id="compare-chip-a" class="compare-chip"></div>
+  <div id="compare-chip-b" class="compare-chip"></div>
+</div>
+
+<div id="br-stack">
+  <a href="https://opendatasicilia.it/" target="_blank" rel="noopener" title="OpenDataSicilia" id="ods-logo-link">
+    <img src="img/opendatasicilia.png" alt="OpenDataSicilia" id="ods-logo"/>
+  </a>
+</div>
+
+<div id="map-toolbar">
+  <button id="tb-home" title="Vista Lazio">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+  </button>
+  <button id="tb-table" title="Tabella dati ed export">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15"/></svg>
+  </button>
+  <button id="tb-fullscreen" title="Schermo intero">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+  </button>
+  <button id="tb-theme" title="Tema chiaro/scuro">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+  </button>
+  <button id="tb-embed" title="Copia codice embed (iframe)">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/></svg>
+  </button>
+  <div class="tb-sep"></div>
+  <input type="range" id="tb-opacity" min="0" max="100" value="82" title="Opacità riempimento"/>
+  <span id="tb-opacity-val">82</span>
+  <div class="tb-sep"></div>
+  <div id="map-timeline">
+    <div class="tl-row">
+      <button class="tl-arrow" id="tl-prev" title="Anno precedente">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>
+      </button>
+      <button class="tl-play" id="tl-play" title="Anima anni">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg>
+      </button>
+      <div class="tl-scroll-wrap"><div class="tl-scroll" id="tl-years"></div></div>
+      <button class="tl-arrow" id="tl-next" title="Anno successivo">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="tl-row tl-row-months">
+      <button class="tl-arrow tl-arrow-sm" id="tl-mese-prev" title="Mese precedente">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>
+      </button>
+      <div class="tl-scroll-wrap"><div class="tl-scroll" id="tl-months"></div></div>
+      <button class="tl-arrow tl-arrow-sm" id="tl-mese-next" title="Mese successivo">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="tb-sep"></div>
+  <button id="tb-info" title="Informazioni">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+  </button>
+</div>
+
+<div id="geo-search-area">
+  <div id="filter-chips"></div>
+  <div id="geo-searchbar">
+    <span class="gs-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+        <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+    </span>
+    <input type="text" id="search-comune" placeholder="Cerca comune…" autocomplete="off"/>
+    <button id="search-clear" style="display:none">&#x2715;</button>
+    <div class="gs-sep"></div>
+    <button id="filter-btn" title="Filtri">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+        <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+      </svg>
+      <span id="filter-badge" style="display:none"></span>
+    </button>
+    <div id="search-dd" class="anncus-search-dd"></div>
+  </div>
+</div>
+
+<div id="filter-overlay"></div>
+<div id="filter-modal">
+  <div class="pfm-header">
+    <h3>Filtri geografici</h3>
+    <button id="pfm-close">&#x2715;</button>
+  </div>
+  <div class="pfm-group">
+    <label>Provincia</label>
+    <div class="filter-group">
+      <select id="sel-provincia"><option value="">Tutte le province</option></select>
+    </div>
+  </div>
+  <div class="pfm-group">
+    <label>Comune</label>
+    <div class="filter-group">
+      <select id="sel-comune"><option value="">Tutti i comuni</option></select>
+    </div>
+  </div>
+  <div class="pfm-footer">
+    <button id="btn-reset" class="pfm-reset">Ripristina</button>
+    <button id="pfm-apply">Applica</button>
+  </div>
+</div>
+
+<div id="table-overlay"></div>
+<div id="table-modal">
+  <div class="pfm-header">
+    <h3>Tabella dati</h3>
+    <button id="tbm-close">&#x2715;</button>
+  </div>
+  <div class="tbm-filters">
+    <div class="tbm-filter-item">
+      <label>Anno</label>
+      <select id="tbm-anno"></select>
+    </div>
+    <div class="tbm-filter-item">
+      <label>Mese</label>
+      <select id="tbm-mese"><option value="">Tutti i mesi</option></select>
+    </div>
+    <div class="tbm-filter-item">
+      <label>Provincia</label>
+      <select id="tbm-provincia"><option value="">Tutte le province</option></select>
+    </div>
+    <div class="tbm-filter-item">
+      <label>Comune</label>
+      <select id="tbm-comune"><option value="">Tutti i comuni</option></select>
+    </div>
+  </div>
+  <div class="tbm-toolbar">
+    <span id="tbm-count">0 righe</span>
+    <div class="tbm-export">
+      <button id="tbm-csv">Scarica CSV</button>
+      <button id="tbm-geojson">Scarica GeoJSON</button>
+    </div>
+  </div>
+  <div class="tbm-table-wrap">
+    <table class="tbm-table">
+      <thead id="tbm-thead"></thead>
+      <tbody id="tbm-tbody"></tbody>
+    </table>
+  </div>
+  <div class="tbm-pagination">
+    <button id="tbm-prev">&#8249; Precedente</button>
+    <span id="tbm-page-info">Pagina 1 di 1</span>
+    <button id="tbm-next">Successiva &#8250;</button>
+  </div>
+</div>
+
+<div id="info">
+  <h3 id="i-title"></h3>
+  <table id="i-table"></table>
+  <div id="i-class"></div>
+  <div id="i-chart"></div>
+</div>
+
+<div id="panel">
+  <div id="panel-toggle">‹</div>
+  <div id="panel-header">
+    <div id="panel-main-title">Lazio climate change 1950 - 2025</div>
+    <h1 id="panel-title">Temperatura × Precipitazione</h1>
+    <p id="panel-sub">378 comuni del Lazio — climatologia TerraClimate 1950-2025</p>
+  </div>
+  <div id="layer-tabs" class="layer-tabs">
+    <button class="layer-tab-btn active" data-layer="tp">Temp × Precip</button>
+    <button class="layer-tab-btn" data-layer="dt">Deficit × Temp</button>
+    <button class="layer-tab-btn" data-layer="anomaly_estate">Anomalia estiva</button>
+  </div>
+  <div id="panel-body">
+
+    <div class="fsec">
+      <div id="mode-toggle" class="mode-toggle">
+        <button class="mode-btn active" data-mode="livello">Valori annui</button>
+        <button class="mode-btn" data-mode="trend">Trend 1950-2025</button>
+        <button class="mode-btn" data-mode="confronto">Confronto</button>
+      </div>
+      <div id="anomaly-z-toggle" class="anomaly-z-toggle">
+        <label><input type="checkbox" id="anomaly-z-check"> Mostra come deviazione standard (σ) invece di °C</label>
+      </div>
+      <p class="biv-hint" id="periodo-hint"></p>
+    </div>
+
+    <div class="fsec" id="compare-panel">
+      <h3>Periodi a confronto</h3>
+      <div class="cmp-periods-row">
+        <div class="cmp-period-col">
+          <label>Periodo A</label>
+          <div class="cmp-year-pair">
+            <div class="cmp-scroll-wrap"><div class="tl-scroll" id="cmp-a-from"></div></div>
+            <span>–</span>
+            <div class="cmp-scroll-wrap"><div class="tl-scroll" id="cmp-a-to"></div></div>
+          </div>
+        </div>
+        <div class="cmp-period-col">
+          <label>Periodo B</label>
+          <div class="cmp-year-pair">
+            <div class="cmp-scroll-wrap"><div class="tl-scroll" id="cmp-b-from"></div></div>
+            <span>–</span>
+            <div class="cmp-scroll-wrap"><div class="tl-scroll" id="cmp-b-to"></div></div>
+          </div>
+        </div>
+        <div class="cmp-period-col cmp-period-col-month">
+          <label>Mese</label>
+          <div class="cmp-scroll-wrap cmp-scroll-wrap-month"><div class="tl-scroll" id="cmp-month"></div></div>
+        </div>
+      </div>
+      <button id="cmp-apply">Applica confronto</button>
+      <p class="biv-hint" id="cmp-hint"></p>
+    </div>
+
+    <hr class="sep"/>
+
+    <div class="fsec">
+      <h3 id="layer-explain-title">Cosa mostra questa mappa</h3>
+      <div id="layer-explain" class="layer-explain"></div>
+    </div>
+
+    <hr class="sep"/>
+
+    <div class="fsec">
+      <h3 id="biv-grid-title">Mappa bivariata</h3>
+      <div class="biv-diamond-wrap">
+        <div class="biv-diamond" id="biv-grid"></div>
+        <div class="biv-diag-lbl biv-diag-lbl-x" id="biv-diag-lbl-x">← Temperatura</div>
+        <div class="biv-diag-lbl biv-diag-lbl-y" id="biv-diag-lbl-y">Precipitazione →</div>
+      </div>
+      <p class="biv-hint">Clic su una cella per isolare la classe. Quintili su tutti i 378 comuni.</p>
+      <div id="biv-trend-chart"></div>
+    </div>
+
+    <hr class="sep"/>
+
+    <div class="fsec">
+      <h3>Statistiche</h3>
+      <div class="stats-grid">
+        <div class="stat-item"><span class="stat-val" id="s-n">—</span><span class="stat-lbl">comuni mostrati</span></div>
+        <div class="stat-item"><span class="stat-val" id="s-temp">—</span><span class="stat-lbl" id="s-temp-lbl">temp. media °C</span></div>
+        <div class="stat-item" id="stat-precip-item"><span class="stat-val" id="s-precip">—</span><span class="stat-lbl" id="s-precip-lbl">precip. media mm</span></div>
+        <div class="stat-item"><span class="stat-val" id="s-prov">—</span><span class="stat-lbl">provincia</span></div>
+      </div>
+    </div>
+
+    <hr class="sep"/>
+
+    <div class="fsec">
+      <h3>Classifiche</h3>
+      <p class="biv-hint" id="rank-hint"></p>
+      <div id="rank-container"></div>
+      <div id="compare-stats" class="stats-grid"></div>
+      <div id="compare-rank-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="info-overlay"></div>
+<div id="info-wrap">
+  <div id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+    <div class="pfm-header">
+      <h3 id="info-modal-title">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+        Informazioni
+      </h3>
+      <button id="info-close" aria-label="Chiudi">&#x2715;</button>
+    </div>
+    <div class="info-tabbar">
+      <button class="info-tab active" data-itab="analisi">Analisi</button>
+      <button class="info-tab" data-itab="guida">Guida</button>
+      <button class="info-tab" data-itab="credits">Credits</button>
+    </div>
+    <button id="info-totop" aria-label="Torna in cima">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+
+    <div class="info-panel active" id="itab-analisi">
+      <div class="info-section">
+        <p class="analisi-title">Il clima laziale, comune per comune, dal 1950 a oggi</p>
+        <p class="info-text">Questa webapp serve a una cosa semplice: capire come sta cambiando il clima nel Lazio, comune per comune. Non un unico numero per l'intera regione, ma <strong>378 storie diverse</strong>, una per ogni comune, ricostruite mese per mese dal 1950 al 2025 — 912 mesi di dati. La fonte è <strong>TerraClimate</strong>, un dataset climatico dell'University of Idaho che stima temperatura, pioggia e altre variabili incrociando osservazioni meteo, satelliti e modelli fisici. Muovendo la mappa si scopre subito una cosa: il Lazio non è omogeneo. Le zone interne, gli Appennini e il litorale si comportano in modo molto diverso tra loro, e due comuni vicini possono avere trend climatici opposti.</p>
+
+        <h3 class="analisi-h3">Le due mappe bivariate del clima</h3>
+        <ul class="analisi-list">
+          <li><strong>Temp × Precip</strong> — incrocia temperatura media e precipitazione totale media annua. Risponde a una domanda intuitiva: questo comune, rispetto agli altri del Lazio, è caldo o freddo? Piovoso o secco?</li>
+          <li><strong>Deficit × Temp</strong> — incrocia temperatura media e <strong>deficit idrico climatico</strong> (PET meno AET, cioè evapotraspirazione potenziale meno quella reale). Il deficit tiene conto insieme di pioggia, temperatura, vento e radiazione solare, quindi racconta una storia più completa. Un comune "caldo e piovoso" può sembrare a posto guardando solo Temp × Precip, ma se ha vento forte e cieli spesso sereni può nascondere uno stress idrico reale che la sola pioggia non mostra.</li>
+        </ul>
+        <p class="info-text">In entrambe le mappe ogni comune viene classificato in una griglia 3×3 (terzili calcolati su tutti i 378 comuni) e colorato con una palette bivariata dedicata: il colore stesso, non solo la posizione, dice subito se un comune è agli estremi o nella via di mezzo.</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Anomalia estiva: quanto si scosta ogni estate dalla norma</h3>
+        <p class="info-text">Qui il confronto è diretto: la temperatura di ogni estate (giugno-luglio-agosto, JJA) rispetto alla <strong>climatologia di riferimento 1950–1985</strong>, cioè al clima "normale" di prima dei grandi cambiamenti recenti. Si può passare tra due modalità: l'anomalia in gradi centigradi, semplice da leggere, oppure lo <strong>z-score</strong>, che dice quante deviazioni standard un'estate si discosta dalla norma — utile per capire se un'estate è stata un'eccezione statistica o solo leggermente sopra media. Scorrendo gli anni con l'autoplay si vede bene la sequenza: fino agli anni '80 le anomalie oscillano intorno allo zero, poi da metà anni '90 il rosso diventa quasi permanente. Nota: la scala è <strong>monocromatica sul rosso</strong> e misura solo l'intensità, non il segno — un'estate leggermente più fresca della norma e una leggermente più calda ricadono nella stessa fascia di colore più chiaro, quindi il rosso tenue non va letto come "vicino allo zero" ma come "scostamento piccolo, in un verso o nell'altro".</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Trend 1950–2025: il clima sta cambiando, ma quanto e dove?</h3>
+        <p class="info-text">Per ogni comune la webapp calcola una regressione lineare (OLS) sui dati annuali dell'intero periodo: il trend di temperatura in <strong>°C/decennio</strong> e quello della seconda variabile in <strong>mm/decennio</strong> (o nell'unità corrispondente), con l'indicazione se il trend è statisticamente significativo (p &lt; 0,05) o se potrebbe essere solo rumore. È lo strumento giusto per rispondere a: questo comune si sta scaldando più o meno della media regionale? La sua pioggia sta davvero calando, o è solo variabilità naturale da un anno all'altro?</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Confronto periodi: due epoche a confronto</h3>
+        <p class="info-text">Una vista a doppia mappa con un divisore trascinabile al centro. Si scelgono due periodi — Periodo A e Periodo B, anche molto distanti tra loro — e si vedono fianco a fianco gli stessi 378 comuni nelle due epoche. È il modo più diretto per rendersi conto, a colpo d'occhio, di quanto e dove il territorio è cambiato: basta trascinare il divisore avanti e indietro.</p>
+
+        <p class="analisi-footer">Dati: TerraClimate (climatologylab.org), confini amministrativi ISTAT. Webapp adattata dal progetto originale <a href="https://palermohub.github.io/sicily_climate_change/" target="_blank" rel="noopener">Sicily climate change</a> di Giovan Battista Vitrano per <a href="https://opendatasicilia.it/" target="_blank" rel="noopener">OpenDataSicilia.it</a>, distribuito con licenza <a href="https://creativecommons.org/licenses/by/4.0/deed.it" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+      </div>
+    </div>
+
+    <div class="info-panel" id="itab-guida">
+      <div class="info-section">
+        <p class="analisi-title">Guida alla mappa</p>
+        <p class="info-text">La mappa colora ognuno dei <strong>378 comuni del Lazio</strong> in base a due variabili incrociate insieme (una mappa "bivariata"), mese per mese dal 1950 al 2025. Il pannello di destra riporta i dettagli del comune selezionato, la legenda cliccabile e le classifiche; la timeline in basso permette di spostarsi nel tempo.</p>
+
+        <h3 class="analisi-h3">Le 4 mappe (schede in alto)</h3>
+        <ul class="analisi-list">
+          <li><strong>Temp × Precip</strong> — temperatura media e precipitazione totale media annua di ogni comune</li>
+          <li><strong>Deficit × Temp</strong> — temperatura media e deficit idrico climatico (PET − AET): individua lo stress idrico "nascosto" anche dove piove abbastanza, se vento e radiazione solare fanno evaporare più acqua di quanta ne cade</li>
+          <li><strong>Anomalia estiva</strong> — mappa a variabile singola (non bivariata): mostra quanto l'estate (giugno-agosto) di ogni comune si scosta dalla propria media storica 1950-2025, con una scala di rossi monocromatica. Il checkbox <strong>"Mostra come deviazione standard (σ)"</strong> converte l'anomalia da °C a un punteggio z, utile per confrontare comuni con climi di partenza molto diversi</li>
+        </ul>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Come leggere i colori</h3>
+        <p class="info-text">Nel pannello di destra la <strong>legenda</strong> è una griglia <strong>5×5</strong> (25 combinazioni: 5 classi per ciascuna variabile, calcolate a quintili sui 378 comuni) ed è <strong>cliccabile</strong>: clicca una cella per isolare sulla mappa solo i comuni che rientrano in quella combinazione, clicca di nuovo per rimuovere il filtro. Il <strong>colore dei poligoni sulla mappa</strong>, invece, usa una versione semplificata a <strong>3×3</strong> (9 combinazioni, a terzili) della stessa griglia, per restare leggibile su 378 poligoni contemporaneamente: due comuni possono quindi avere sfumature di legenda diverse ma lo stesso colore sulla mappa. Nella mappa "Anomalia estiva" (variabile singola) la legenda ha 5 caselle in fila e la mappa ne usa 3.</p>
+        <p class="info-text">Passa il mouse su un comune per un'anteprima rapida in un tooltip flottante; clicca sul comune per aprire il popup completo con i valori esatti delle due variabili.</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Modalità (pannello di destra)</h3>
+        <ul class="analisi-list">
+          <li><strong>Valori annui</strong> — la mappa bivariata classica, per il mese/anno selezionato nella timeline in basso</li>
+          <li><strong>Trend 1950-2025</strong> — per ogni comune calcola una regressione OLS sull'intero periodo: mostra dove il riscaldamento è più marcato e dove i regimi di pioggia/deficit/siccità stanno cambiando di più, con l'indicazione se il trend è statisticamente significativo (p&lt;0.05)</li>
+          <li><strong>Confronto</strong> — doppia mappa con divisore trascinabile: si scelgono un Periodo A e un Periodo B (anno o mese) e si vedono affiancati gli stessi comuni nelle due epoche</li>
+        </ul>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Timeline</h3>
+        <p class="info-text">In basso trovi la timeline con anni e mesi in liste scorrevoli: clicca un anno o un mese per aggiornare la mappa, usa le frecce ↑↓ per scorrere, oppure il pulsante ▶ per animare l'intera serie storica anno per anno.</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Statistiche e classifiche</h3>
+        <p class="info-text">In fondo al pannello di destra, la sezione <strong>Statistiche</strong> riassume i comuni mostrati (numero, medie, provincia), mentre <strong>Classifiche</strong> elenca i comuni più/meno estremi su ciascuna variabile per il periodo selezionato — utile per individuare rapidamente i casi limite senza scorrere tutta la mappa.</p>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Strumenti della toolbar</h3>
+        <ul class="analisi-list guida-list">
+          <li><span class="guida-icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9.5 20v-6h5v6"/></svg></span> <strong>Vista Lazio</strong> — riporta la mappa all'inquadratura iniziale</li>
+          <li><span class="guida-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15"/></svg></span> <strong>Tabella dati ed export</strong> — apre la tabella dati filtrabile per anno, mese, provincia e comune, con export CSV o GeoJSON</li>
+          <li><span class="guida-icon"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span> <strong>Schermo intero</strong> — attiva/disattiva la modalità a tutto schermo</li>
+          <li><span class="guida-icon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg></span> <strong>Tema chiaro/scuro</strong> — cambia la mappa di base tra tema chiaro e tema scuro</li>
+          <li><strong>Cursore opacità</strong> — regola la trasparenza del riempimento colorato dei comuni, per vedere meglio la mappa di base sotto (strade, confini, rilievo)</li>
+        </ul>
+
+        <hr class="analisi-sep">
+
+        <h3 class="analisi-h3">Ricerca e filtri</h3>
+        <p class="info-text">La barra di ricerca in alto permette di cercare un comune per nome e centrare la mappa su di esso; il pulsante <strong>Filtri</strong> apre un pannello per restringere la vista a una singola provincia o a un singolo comune. I filtri restano attivi cambiando mappa, modalità o periodo, e si combinano con il filtro per cella di legenda.</p>
+      </div>
+    </div>
+
+    <div class="info-panel" id="itab-credits">
+      <div class="info-section">
+        <div class="info-row">
+          <strong>Fonte dati climatici</strong><br><br>
+          <strong>TerraClimate</strong>: dataset climatico globale mensile ad alta risoluzione (~4 km), prodotto dal Climatology Lab dell'Università dell'Idaho combinando le climatologie WorldClim con osservazioni CRU Ts4.0 e reanalisi JRA-55, per ottenere serie storiche mensili coerenti dal 1958 a oggi.<br>
+          Il <strong>Climatology Lab</strong> (climatologylab.org) è il gruppo di ricerca che sviluppa e distribuisce gratuitamente dataset climatici globali (temperatura, precipitazioni, indici di siccità come il PDSI, evapotraspirazione ecc.), ampiamente usati in ambito scientifico per analisi idrologiche, agricole ed ecologiche.<br>
+          <a href="https://www.climatologylab.org/terraclimate.html" title="TerraClimate" target="_blank" rel="noopener">climatologylab.org/terraclimate</a>
+        </div>
+        <div class="info-row">
+          <strong>Confini amministrativi</strong><br>
+          ISTAT — confini comunali 2022.
+        </div>
+        <div class="info-row">
+          <strong>Periodo</strong><br>
+          Dati mensili 1950–2025 (912 mesi), climatologia e trend calcolati sull'intero periodo.
+        </div>
+        <hr class="analisi-sep">
+        <p class="info-text">Adattamento per il Lazio a cura di <strong>Laziohub</strong>, in collaborazione con <a href="https://claude.ai" target="_blank" rel="noopener" class="mi-link">Claude AI (Anthropic)</a>. Basato sul progetto originale <a href="https://palermohub.github.io/sicily_climate_change/" target="_blank" rel="noopener" class="mi-link">Sicily climate change</a>, progettato e sviluppato da <a href="https://www.linkedin.com/in/gbvitrano/" target="_blank" rel="noopener" class="mi-link">@gbvitrano</a> per <a href="https://opendatasicilia.it/" target="_blank" rel="noopener" class="mi-link">OpenDataSicilia.it</a>.</p>
+        <p class="info-text">La mappa usa <b>MapLibre GL JS</b> e <b>PMTiles</b>, formato vettoriale che permette di caricare solo i tile visibili senza server backend: veloce, leggera e ospitabile su hosting statico.</p>
+        <hr class="analisi-sep">
+        <div class="info-row">
+          <strong>Dataset scaricabile</strong><br>
+          Dati clima per comune (378 comuni), formato CSV/GeoJSON con schema documentato, pronti per riuso in altri progetti.<br>
+          <a href="output/lazio_clima_export.csv" download title="Scarica CSV">⬇ CSV</a> ·
+          <a href="output/lazio_clima_export.geojson" download title="Scarica GeoJSON">⬇ GeoJSON</a> ·
+          <a href="output/SCHEMA.md" target="_blank" rel="noopener" title="Schema campi">Schema</a> ·
+          <a href="README.md" target="_blank" rel="noopener" title="README progetto">README</a>
+        </div>
+        <hr class="analisi-sep">
+        <p class="info-text">I contenuti sono rilasciati sotto licenza <a href="https://creativecommons.org/licenses/by/4.0/deed.it" target="_blank" rel="noopener"><strong>CC BY 4.0 – Attribuzione 4.0 Internazionale</strong></a>. Sei libero di condividere e adattare il materiale per qualsiasi scopo, anche commerciale, citando adeguatamente la fonte.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js?v=20260726e"></script>
+<script src="js/core.js?v=20260726e"></script>
+<script src="js/layers.js?v=20260726e"></script>
+<script src="js/timeline.js?v=20260726e"></script>
+<script src="js/table.js?v=20260726e"></script>
+<script src="js/panel.js?v=20260726e"></script>
+<script src="js/charts.js?v=20260726e"></script>
+<script src="js/shell.js?v=20260726e"></script>
+<script src="js/compare.js?v=20260725i"></script>
+</body>
+</html>

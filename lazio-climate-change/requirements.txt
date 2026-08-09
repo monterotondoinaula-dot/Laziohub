@@ -1,0 +1,9 @@
+numpy
+scipy
+pandas
+xarray
+netCDF4
+geopandas
+rasterio
+rioxarray
+rasterstats
