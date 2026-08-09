@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#0B1420"/>
+
+  <!-- classic "linked open data" node graph, compact and legible at small size -->
+  <g stroke-width="7" opacity="0.9">
+    <line x1="256" y1="256" x2="170" y2="180" stroke="#5B9BF2"/>
+    <line x1="256" y1="256" x2="342" y2="180" stroke="#5B9BF2"/>
+    <line x1="256" y1="256" x2="150" y2="320" stroke="#2FBF8F"/>
+    <line x1="256" y1="256" x2="362" y2="320" stroke="#2FBF8F"/>
+    <line x1="170" y1="180" x2="342" y2="180" stroke="#5B9BF2" opacity="0.5"/>
+    <line x1="150" y1="320" x2="362" y2="320" stroke="#2FBF8F" opacity="0.5"/>
+  </g>
+
+  <circle cx="170" cy="180" r="16" fill="#5B9BF2"/>
+  <circle cx="342" cy="180" r="16" fill="#5B9BF2"/>
+  <circle cx="150" cy="320" r="16" fill="#2FBF8F"/>
+  <circle cx="362" cy="320" r="16" fill="#2FBF8F"/>
+  <circle cx="256" cy="256" r="26" fill="#F2FBF8"/>
+  <circle cx="256" cy="256" r="26" fill="none" stroke="#1668DC" stroke-width="6"/>
+</svg>
