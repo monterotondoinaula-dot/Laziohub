@@ -1,6 +1,6 @@
 # Mappa bivariata Temperatura × Precipitazioni — Lazio (1950–2025)
 
-Mappa interattiva (MapLibre GL + PMTiles) dei 391 comuni del Lazio che incrocia, comune per comune, coppie di variabili climatiche e ambientali — temperatura, precipitazioni, deficit idrico, siccità (PDSI) — mese per mese o anno per anno, dal 1950 al 2025.
+Mappa interattiva (MapLibre GL + PMTiles) dei 378 comuni del Lazio che incrocia, comune per comune, coppie di variabili climatiche e ambientali — temperatura, precipitazioni, deficit idrico, siccità (PDSI) — mese per mese o anno per anno, dal 1950 al 2025. Ispirato da https://palermohub.opendatasicilia.it/sicily_climate_change.html
 
 Sito pubblicato da LAziohub — dati grezzi TerraClimate (University of Idaho / climatologylab.org).
 
@@ -10,11 +10,10 @@ Sito pubblicato da LAziohub — dati grezzi TerraClimate (University of Idaho / 
 
 ### 1.1 Livello (mappa bivariata classica)
 
-Quattro schede (tab), ciascuna con una coppia di variabili incrociata in una griglia **3×3** per il colore della mappa (la classificazione testuale, il popup e le classifiche usano invece **5×5**, quintili, per maggior dettaglio), calcolata sui 391 comuni:
+Quattro schede (tab), ciascuna con una coppia di variabili incrociata in una griglia **3×3** per il colore della mappa (la classificazione testuale, il popup e le classifiche usano invece **5×5**, quintili, per maggior dettaglio), calcolata sui 378 comuni:
 
 - **Temp × Precip**: temperatura media e precipitazione totale media annua. Risponde a "questo comune è caldo o freddo, secco o piovoso, rispetto agli altri comuni Lazioni?".
 - **Deficit × Temp**: temperatura media e **deficit idrico climatico** (`def = PET − AET`, evapotraspirazione potenziale meno reale, in mm). Il deficit è un indice di sintesi che tiene conto insieme di pioggia, temperatura, vento e radiazione solare: un comune "caldo e piovoso" può sembrare innocuo nella mappa Temp × Precip, ma se ha vento forte e cieli sereni può nascondere uno stress idrico reale non visibile guardando solo la pioggia.
-- **PDSI × Incendi**: indice di siccità (Palmer Drought Severity Index) incrociato con il dato incendi, in due varianti selezionabili (area bruciata in ha, o numero di eventi). Il dato incendio è sempre **annuale** (il PDSI segue invece mese/anno selezionato): periodo disponibile 2007–2025, con il 2019 assente dal dataset regionale antincendio. I comuni senza incendi registrati in un anno appaiono in grigio neutro, distinto dalla classe "poco rischio", per non confondere "nessun dato" con "rischio basso".
 - **Anomalia estiva**: indicatore **singolo** (non bivariato) — quanto la temperatura media dell'estate (giugno-luglio-agosto) di un anno si scosta dalla media estiva baseline 1950–1985, comune per comune. Scala colore monocromatica rossa fissa su tutto il periodo 1950–2025 (le stesse soglie ogni anno), così il progredire del colore nel tempo racconta il riscaldamento. Include un toggle per ricolorare in **deviazioni standard** (z-score) rispetto alla variabilità storica del singolo comune, invece che in °C assoluti.
 
 Ogni combinazione di classi ha un colore bivariato dedicato (palette tipo Stevens/CARTO, monocromatica per l'anomalia estiva), spiegato nel pannello laterale (con testo esplicativo per tab) e nel popup di ogni comune.
@@ -47,20 +46,6 @@ Vista a doppia mappa con divisore trascinabile (swipe): si scelgono due periodi 
 - Vista e permalink sincronizzati nell'URL (centro, zoom, bearing, pitch) — un reload o un link condiviso riparte dallo stesso punto di vista
 - Layout responsive: su schermi ≤640px il pannello laterale è nascosto di default per lasciare spazio alla mappa
 
-### Embed su altri siti
-
-La pagina può essere incorporata via `<iframe>` (nessuna configurazione server richiesta, funziona così com'è su GitHub Pages):
-
-```html
-<iframe
-  src="https://palermohub.github.io/sicily_climate_change/"
-  width="100%" height="640" style="border:0"
-  allow="fullscreen" loading="lazy">
-</iframe>
-```
-
-Senza l'attributo `allow="fullscreen"` il pulsante schermo intero della toolbar si nasconde automaticamente (l'API `Fullscreen` risulta disabilitata nell'iframe), il resto della mappa funziona normalmente.
-
 ---
 
 ## 2. Procedura di recupero e preparazione dati
@@ -87,7 +72,7 @@ Due percorsi alternativi, entrambi presenti negli script:
 - `scripts/estrai_comuni_Lazio.py` — filtra i comuni Lazio (`COD_REG == 19`) dallo shapefile ISTAT nazionale (`Com01012022_g_WGS84.shp`).
 - `scripts/estrai_comuni_Lazio_pmtiles.py` — in alternativa, estrae i comuni Lazio dal pmtiles già pubblicato su gbvitrano.it/anncus, con `dissolve` per ricomporre i poligoni spezzati dal tiling MVT.
 
-Output: `data/processed/comuni_Lazio.gpkg` (391 comuni).
+Output: `data/processed/comuni_Lazio.gpkg` (378 comuni).
 
 ### 2.3 Statistiche zonali (climatologia 1950–2025)
 
@@ -107,7 +92,7 @@ Salva anche i raster intermedi (`temp_media_annua.tif`, `precip_media_annua.tif`
 
 Da `comuni_Lazio_clima.gpkg`, per ciascuna coppia di variabili (Temp × Precip, Deficit × Temp):
 
-1. calcola i terzili (breakpoint) sulle due variabili, su tutti i 391 comuni;
+1. calcola i terzili (breakpoint) sulle due variabili, su tutti i 378 comuni;
 2. classifica ogni comune in una cella 3×3 (es. "2-3" = temperatura media, precipitazione alta);
 3. assegna il colore bivariato dalla palette dedicata.
 
@@ -120,7 +105,7 @@ Output (con suffisso `_def` per la variante deficit):
 
 `scripts/build_timeseries.py`
 
-Rasterizza i 391 comuni sulla griglia TerraClimate una sola volta (zone raster), poi aggrega vettorialmente tutti i 912 mesi con numpy in un solo passaggio (per performance).
+Rasterizza i 378 comuni sulla griglia TerraClimate una sola volta (zone raster), poi aggrega vettorialmente tutti i 912 mesi con numpy in un solo passaggio (per performance).
 
 Output: `dati/comuni_timeseries[_def].json` — serie mensile 1950–2025 per comune, usata dalla timeline e dalla modalità "Livello" per ogni mese/anno selezionato.
 
@@ -197,7 +182,7 @@ Eseguire gli script in `scripts/` nell'ordine indicato al punto 2 (download → 
 
 Oltre ai dati interni usati dalla mappa (`dati/*.json`, pensati per il caricamento incrementale via frontend), è disponibile un export standalone comune-per-comune per chi vuole riusare i dati clima/incendi in altri progetti (es. OpenDataLazio):
 
-- [`output/Lazio_clima_export.csv`](output/Lazio_clima_export.csv) — 391 righe, una per comune
+- [`output/Lazio_clima_export.csv`](output/Lazio_clima_export.csv) — 378 righe, una per comune
 - [`output/Lazio_clima_export.geojson`](output/Lazio_clima_export.geojson) — stessi campi + geometria comunale (WGS84)
 - [`output/SCHEMA.md`](output/SCHEMA.md) — descrizione campi, unità di misura, fonti, periodo
 
