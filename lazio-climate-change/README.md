@@ -1,8 +1,8 @@
-# Mappa bivariata Temperatura × Precipitazioni — Sicilia (1950–2025)
+# Mappa bivariata Temperatura × Precipitazioni — Lazio (1950–2025)
 
-Mappa interattiva (MapLibre GL + PMTiles) dei 391 comuni della Sicilia che incrocia, comune per comune, coppie di variabili climatiche e ambientali — temperatura, precipitazioni, deficit idrico, siccità (PDSI), incendi — mese per mese o anno per anno, dal 1950 al 2025.
+Mappa interattiva (MapLibre GL + PMTiles) dei 391 comuni del Lazio che incrocia, comune per comune, coppie di variabili climatiche e ambientali — temperatura, precipitazioni, deficit idrico, siccità (PDSI) — mese per mese o anno per anno, dal 1950 al 2025.
 
-Sito pubblicato da OpenDataSicilia.it — dati grezzi TerraClimate (University of Idaho / climatologylab.org) e dati incendi SIF (Sistema Informativo Forestale, Regione Siciliana).
+Sito pubblicato da LAziohub — dati grezzi TerraClimate (University of Idaho / climatologylab.org).
 
 ---
 
@@ -12,7 +12,7 @@ Sito pubblicato da OpenDataSicilia.it — dati grezzi TerraClimate (University o
 
 Quattro schede (tab), ciascuna con una coppia di variabili incrociata in una griglia **3×3** per il colore della mappa (la classificazione testuale, il popup e le classifiche usano invece **5×5**, quintili, per maggior dettaglio), calcolata sui 391 comuni:
 
-- **Temp × Precip**: temperatura media e precipitazione totale media annua. Risponde a "questo comune è caldo o freddo, secco o piovoso, rispetto agli altri comuni siciliani?".
+- **Temp × Precip**: temperatura media e precipitazione totale media annua. Risponde a "questo comune è caldo o freddo, secco o piovoso, rispetto agli altri comuni Lazioni?".
 - **Deficit × Temp**: temperatura media e **deficit idrico climatico** (`def = PET − AET`, evapotraspirazione potenziale meno reale, in mm). Il deficit è un indice di sintesi che tiene conto insieme di pioggia, temperatura, vento e radiazione solare: un comune "caldo e piovoso" può sembrare innocuo nella mappa Temp × Precip, ma se ha vento forte e cieli sereni può nascondere uno stress idrico reale non visibile guardando solo la pioggia.
 - **PDSI × Incendi**: indice di siccità (Palmer Drought Severity Index) incrociato con il dato incendi, in due varianti selezionabili (area bruciata in ha, o numero di eventi). Il dato incendio è sempre **annuale** (il PDSI segue invece mese/anno selezionato): periodo disponibile 2007–2025, con il 2019 assente dal dataset regionale antincendio. I comuni senza incendi registrati in un anno appaiono in grigio neutro, distinto dalla classe "poco rischio", per non confondere "nessun dato" con "rischio basso".
 - **Anomalia estiva**: indicatore **singolo** (non bivariato) — quanto la temperatura media dell'estate (giugno-luglio-agosto) di un anno si scosta dalla media estiva baseline 1950–1985, comune per comune. Scala colore monocromatica rossa fissa su tutto il periodo 1950–2025 (le stesse soglie ogni anno), così il progredire del colore nel tempo racconta il riscaldamento. Include un toggle per ricolorare in **deviazioni standard** (z-score) rispetto alla variabilità storica del singolo comune, invece che in °C assoluti.
@@ -69,25 +69,25 @@ Pipeline completa, in ordine di esecuzione. Tutti gli script sono in `scripts/`.
 
 ### 2.1 Download dati climatici grezzi
 
-`scripts/download_terraclimate_sicilia.py`
+`scripts/download_terraclimate_Lazio.py`
 
-Scarica da THREDDS (`climatologylab.org`, dataset **TerraClimate**) le variabili mensili 1950–oggi ritagliate sul bounding box della Sicilia (con margine per includere Lampedusa e Linosa, lat 35.3–38.9, lon 11.8–16.0):
+Scarica da THREDDS (`climatologylab.org`, dataset **TerraClimate**) le variabili mensili 1950–oggi ritagliate sul bounding box della Lazio (con margine per includere Lampedusa e Linosa, lat 35.3–38.9, lon 11.8–16.0):
 
 - `ppt` — precipitazione mensile (mm)
 - `tmax`, `tmin` — temperatura massima/minima mensile (°C), da cui si ricava `tmean = (tmax+tmin)/2`
 - `def` — deficit idrico climatico (PET − AET, mm)
 - `PDSI` — Palmer Drought Severity Index mensile (indice di siccità)
 
-Output: `data/raw/terraclimate_{ppt,tmax,tmin,def,PDSI}_sicilia_1950_2025.nc` (griglia ~4 km, 912 mesi).
+Output: `data/raw/terraclimate_{ppt,tmax,tmin,def,PDSI}_lazio_1950_2025.nc` (griglia ~4 km, 912 mesi).
 
 ### 2.2 Confini comunali
 
 Due percorsi alternativi, entrambi presenti negli script:
 
-- `scripts/estrai_comuni_sicilia.py` — filtra i comuni Sicilia (`COD_REG == 19`) dallo shapefile ISTAT nazionale (`Com01012022_g_WGS84.shp`).
-- `scripts/estrai_comuni_sicilia_pmtiles.py` — in alternativa, estrae i comuni Sicilia dal pmtiles già pubblicato su gbvitrano.it/anncus, con `dissolve` per ricomporre i poligoni spezzati dal tiling MVT.
+- `scripts/estrai_comuni_Lazio.py` — filtra i comuni Lazio (`COD_REG == 19`) dallo shapefile ISTAT nazionale (`Com01012022_g_WGS84.shp`).
+- `scripts/estrai_comuni_Lazio_pmtiles.py` — in alternativa, estrae i comuni Lazio dal pmtiles già pubblicato su gbvitrano.it/anncus, con `dissolve` per ricomporre i poligoni spezzati dal tiling MVT.
 
-Output: `data/processed/comuni_sicilia.gpkg` (391 comuni).
+Output: `data/processed/comuni_Lazio.gpkg` (391 comuni).
 
 ### 2.3 Statistiche zonali (climatologia 1950–2025)
 
@@ -99,13 +99,13 @@ Calcola, per ogni comune, la media dei valori raster TerraClimate sull'intero pe
 - precipitazione totale media annua (media dei totali annui)
 - deficit idrico climatico medio annuo (media dei totali annui di `def`)
 
-Salva anche i raster intermedi (`temp_media_annua.tif`, `precip_media_annua.tif`, `def_media_mm.tif`) e produce `data/processed/comuni_sicilia_clima.gpkg` con le statistiche allegate ai poligoni comunali.
+Salva anche i raster intermedi (`temp_media_annua.tif`, `precip_media_annua.tif`, `def_media_mm.tif`) e produce `data/processed/comuni_Lazio_clima.gpkg` con le statistiche allegate ai poligoni comunali.
 
 ### 2.4 Generazione dati bivariati (livello)
 
-`scripts/make_bivariate_sicilia.py`
+`scripts/make_bivariate_Lazio.py`
 
-Da `comuni_sicilia_clima.gpkg`, per ciascuna coppia di variabili (Temp × Precip, Deficit × Temp):
+Da `comuni_Lazio_clima.gpkg`, per ciascuna coppia di variabili (Temp × Precip, Deficit × Temp):
 
 1. calcola i terzili (breakpoint) sulle due variabili, su tutti i 391 comuni;
 2. classifica ogni comune in una cella 3×3 (es. "2-3" = temperatura media, precipitazione alta);
@@ -195,15 +195,15 @@ Eseguire gli script in `scripts/` nell'ordine indicato al punto 2 (download → 
 
 ## 5. Dataset scaricabile (riuso esterno)
 
-Oltre ai dati interni usati dalla mappa (`dati/*.json`, pensati per il caricamento incrementale via frontend), è disponibile un export standalone comune-per-comune per chi vuole riusare i dati clima/incendi in altri progetti (es. OpenDataSicilia):
+Oltre ai dati interni usati dalla mappa (`dati/*.json`, pensati per il caricamento incrementale via frontend), è disponibile un export standalone comune-per-comune per chi vuole riusare i dati clima/incendi in altri progetti (es. OpenDataLazio):
 
-- [`output/sicilia_clima_export.csv`](output/sicilia_clima_export.csv) — 391 righe, una per comune
-- [`output/sicilia_clima_export.geojson`](output/sicilia_clima_export.geojson) — stessi campi + geometria comunale (WGS84)
+- [`output/Lazio_clima_export.csv`](output/Lazio_clima_export.csv) — 391 righe, una per comune
+- [`output/Lazio_clima_export.geojson`](output/Lazio_clima_export.geojson) — stessi campi + geometria comunale (WGS84)
 - [`output/SCHEMA.md`](output/SCHEMA.md) — descrizione campi, unità di misura, fonti, periodo
 
 Contiene: temperatura/precipitazione/deficit idrico medi e trend OLS (°/decennio), anomalia estiva (z-score), PDSI medio e trend, incendi (superficie/conteggio medi, trend, totali 2007–2024). Chiave di join: `id_istat` (codice ISTAT comune).
 
-Rigenerazione: `python3 scripts/export_dataset.py` (legge da `data/processed/comuni_sicilia_clima.csv` e `dati/*.json`, nessun nuovo download necessario).
+Rigenerazione: `python3 scripts/export_dataset.py` (legge da `data/processed/comuni_Lazio_clima.csv` e `dati/*.json`, nessun nuovo download necessario).
 
 Link diretti anche nel modale info della mappa (tab **Credits**).
 
@@ -211,6 +211,6 @@ Link diretti anche nel modale info della mappa (tab **Credits**).
 
 Questo progetto è distribuito con licenza [Creative Commons Attribuzione 4.0 Internazionale (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.it).
 
-Sei libero di condividere e adattare il materiale per qualsiasi uso, anche commerciale, purché venga data adeguata attribuzione a OpenDataSicilia.it. Vedi il file [LICENSE](LICENSE) per il testo completo.
+Sei libero di condividere e adattare il materiale per qualsiasi uso, anche commerciale, purché venga data adeguata attribuzione a OpenDataLazio.it. Vedi il file [LICENSE](LICENSE) per il testo completo.
 
-Dati climatici grezzi: TerraClimate (University of Idaho, climatologylab.org). Dati incendi: SIF — Sistema Informativo Forestale, Regione Siciliana, Censimento incendi 2007-2025 (https://sif.regione.sicilia.it/ilportale/). Confini amministrativi: ISTAT.
+Dati climatici grezzi: TerraClimate (University of Idaho, climatologylab.org). Dati incendi: SIF — Sistema Informativo Forestale, Regione Laziona, Censimento incendi 2007-2025 (https://sif.regione.Lazio.it/ilportale/). Confini amministrativi: ISTAT.
