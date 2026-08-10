@@ -331,6 +331,13 @@
       height: 100%;
     }
 
+    .map-card-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .map-card-preview[data-tag="clima"] { background: linear-gradient(135deg, #0B1420, #10261F); }
     .map-card-preview[data-tag="territorio"] { background: linear-gradient(135deg, #0B1420, #0E2036); }
 
@@ -1546,11 +1553,16 @@
     const tagEl = map.placeholder
       ? `<span class="map-card-tag" data-tag="${map.tag}"><span class="node-dot" style="background:var(--muted)"></span>${map.tagLabel}</span>`
       : `<span class="map-card-tag" data-tag="${map.tag}"><span class="node-dot"></span>${map.tagLabel}</span>`;
-
+  
+    // Se è definita la proprietà 'image', usa il tag <img>, altrimenti genera l'SVG
+    const previewContent = map.image 
+      ? `<img src="${map.image}" alt="${map.title}" loading="lazy" />`
+      : previewSVG(map.tag);
+  
     if (map.placeholder) {
       return `
         <article class="map-card placeholder">
-          <div class="map-card-preview" data-tag="${map.tag}">${previewSVG(map.tag)}</div>
+          <div class="map-card-preview" data-tag="${map.tag}">${previewContent}</div>
           <div class="map-card-body">
             <div class="map-card-top">
               ${tagEl}
@@ -1564,24 +1576,24 @@
           </div>
         </article>`;
     }
-    return `
-      <article class="map-card">
-        <a class="map-card-link" href="${map.href}" aria-label="${map.title}"></a>
-        <div class="map-card-preview" data-tag="${map.tag}">${previewSVG(map.tag)}</div>
-        <div class="map-card-body">
-          <div class="map-card-top">
-            ${tagEl}
-            <span class="map-card-meta">${map.year}</span>
-          </div>
-          <div class="map-card-title">${map.title}</div>
-          <div class="map-card-bottom">
-            <span class="map-card-source">${map.source}</span>
-            <span class="map-card-arrow">→</span>
-          </div>
-        </div>
-      </article>`;
-  }
 
+  return `
+    <article class="map-card">
+      <a class="map-card-link" href="${map.href}" aria-label="${map.title}"></a>
+      <div class="map-card-preview" data-tag="${map.tag}">${previewContent}</div>
+      <div class="map-card-body">
+        <div class="map-card-top">
+          ${tagEl}
+          <span class="map-card-meta">${map.year}</span>
+        </div>
+        <div class="map-card-title">${map.title}</div>
+        <div class="map-card-bottom">
+          <span class="map-card-source">${map.source}</span>
+          <span class="map-card-arrow">→</span>
+        </div>
+      </div>
+    </article>`;
+}
   function renderPage(page, scroll = true) {
     currentPage = page;
     const start = (page - 1) * PER_PAGE;
