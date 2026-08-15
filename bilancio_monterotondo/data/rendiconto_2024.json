@@ -1,0 +1,498 @@
+{
+  "anno": 2024,
+  "tipo_documento": "rendiconto",
+  "entrate_tipologia": [
+    {
+      "key": "e10101",
+      "label": "Imposte, tasse e proventi RS 15.631.236,24 RR 2.553.968,76 R 0,00 EP 13.077.267,48",
+      "sub": "Titolo 1 · 1.0101",
+      "v_preventivo": 21359631.01,
+      "v_consuntivo": 22385224.73,
+      "diff_assoluta": 1025593.72,
+      "pct_realizzazione": 104.8,
+      "pct_scostamento": 4.8
+    },
+    {
+      "key": "e10301",
+      "label": "Fondi perequativi da RS 10.921,94 RR 5.992,27 R -4.929,67 EP 0,00",
+      "sub": "Titolo 1 · 1.0301",
+      "v_preventivo": 5419880.8,
+      "v_consuntivo": 5271373.8,
+      "diff_assoluta": -148507.0,
+      "pct_realizzazione": 97.26,
+      "pct_scostamento": -2.74
+    },
+    {
+      "key": "e20101",
+      "label": "Trasferimenti correnti da RS 5.358.221,88 RR 2.757.748,99 R -82.499,24 EP 2.517.973,65",
+      "sub": "Titolo 2 · 2.0101",
+      "v_preventivo": 9517659.43,
+      "v_consuntivo": 8789706.43,
+      "diff_assoluta": -727953.0,
+      "pct_realizzazione": 92.35,
+      "pct_scostamento": -7.65
+    },
+    {
+      "key": "e30100",
+      "label": "Vendita di beni e servizi e RS 1.402.345,68 RR 588.393,82 R -30.574,00 EP 783.377,86",
+      "sub": "Titolo 3 · 3.0100",
+      "v_preventivo": 2967771.0,
+      "v_consuntivo": 2659744.89,
+      "diff_assoluta": -308026.11,
+      "pct_realizzazione": 89.62,
+      "pct_scostamento": -10.38
+    },
+    {
+      "key": "e30200",
+      "label": "Proventi derivanti dall'attività di RS 1.239.936,50 RR 441.773,28 R 0,00 EP 798.163,22",
+      "sub": "Titolo 3 · 3.0200",
+      "v_preventivo": 1007600.0,
+      "v_consuntivo": 1002571.75,
+      "diff_assoluta": -5028.25,
+      "pct_realizzazione": 99.5,
+      "pct_scostamento": -0.5
+    },
+    {
+      "key": "e30300",
+      "label": "Interessi attivi RS 0,00 RR 0,00 R 0,00 EP 0,00",
+      "sub": "Titolo 3 · 3.0300",
+      "v_preventivo": 23991.07,
+      "v_consuntivo": 22894.55,
+      "diff_assoluta": -1096.52,
+      "pct_realizzazione": 95.43,
+      "pct_scostamento": -4.57
+    },
+    {
+      "key": "e30500",
+      "label": "Rimborsi e altre entrate correnti RS 1.787.776,99 RR 353.866,60 R -71.762,33 EP 1.362.148,06",
+      "sub": "Titolo 3 · 3.0500",
+      "v_preventivo": 1547166.84,
+      "v_consuntivo": 978284.09,
+      "diff_assoluta": -568882.75,
+      "pct_realizzazione": 63.23,
+      "pct_scostamento": -36.77
+    },
+    {
+      "key": "e40100",
+      "label": "Tributi in conto capitale RS 0,00 RR 0,00 R 0,00 EP 0,00",
+      "sub": "Titolo 4 · 4.0100",
+      "v_preventivo": 80000.0,
+      "v_consuntivo": 77699.22,
+      "diff_assoluta": -2300.78,
+      "pct_realizzazione": 97.12,
+      "pct_scostamento": -2.88
+    },
+    {
+      "key": "e40200",
+      "label": "Contributi agli investimenti RS 31.091.009,81 RR 2.309.307,72 R -263.156,49 EP 28.518.545,60",
+      "sub": "Titolo 4 · 4.0200",
+      "v_preventivo": 7034422.32,
+      "v_consuntivo": 6021228.41,
+      "diff_assoluta": -1013193.91,
+      "pct_realizzazione": 85.6,
+      "pct_scostamento": -14.4
+    },
+    {
+      "key": "e40300",
+      "label": "Altri trasferimenti in conto RS 0,00 RR 0,00 R 0,00 EP 0,00",
+      "sub": "Titolo 4 · 4.0300",
+      "v_preventivo": 50000.0,
+      "v_consuntivo": 7643.0,
+      "diff_assoluta": -42357.0,
+      "pct_realizzazione": 15.29,
+      "pct_scostamento": -84.71
+    },
+    {
+      "key": "e40400",
+      "label": "Entrate da alienazione di beni RS 229.179,23 RR 0,00 R -6.335,04 EP 222.844,19",
+      "sub": "Titolo 4 · 4.0400",
+      "v_preventivo": 1172899.98,
+      "v_consuntivo": 707612.6,
+      "diff_assoluta": -465287.38,
+      "pct_realizzazione": 60.33,
+      "pct_scostamento": -39.67
+    },
+    {
+      "key": "e40500",
+      "label": "Altre entrate in conto capitale RS 4.155,00 RR 4.155,00 R 0,00 EP 0,00",
+      "sub": "Titolo 4 · 4.0500",
+      "v_preventivo": 1430000.0,
+      "v_consuntivo": 1226135.19,
+      "diff_assoluta": -203864.81,
+      "pct_realizzazione": 85.74,
+      "pct_scostamento": -14.26
+    },
+    {
+      "key": "e60300",
+      "label": "Accensione mutui e altri RS 2.641.350,67 RR 1.371.532,21 R -0,01 EP 1.269.818,45",
+      "sub": "Titolo 6 · 6.0300",
+      "v_preventivo": 1600000.0,
+      "v_consuntivo": 1400000.0,
+      "diff_assoluta": -200000.0,
+      "pct_realizzazione": 87.5,
+      "pct_scostamento": -12.5
+    },
+    {
+      "key": "e70100",
+      "label": "Anticipazioni da istituto RS 0,00 RR 0,00 R 0,00 EP 0,00",
+      "sub": "Titolo 7 · 7.0100",
+      "v_preventivo": 10000000.0,
+      "v_consuntivo": 0.0,
+      "diff_assoluta": -10000000.0,
+      "pct_realizzazione": 0.0,
+      "pct_scostamento": -100.0
+    },
+    {
+      "key": "e90100",
+      "label": "Entrate per partite di giro RS 73.660,14 RR 0,00 R -73.660,14 EP 0,00",
+      "sub": "Titolo 9 · 9.0100",
+      "v_preventivo": 23700000.0,
+      "v_consuntivo": 2075793.0,
+      "diff_assoluta": -21624207.0,
+      "pct_realizzazione": 8.76,
+      "pct_scostamento": -91.24
+    },
+    {
+      "key": "e90200",
+      "label": "Entrate per conto terzi RS 246.145,67 RR 450,00 R -245.695,67 EP 0,00",
+      "sub": "Titolo 9 · 9.0200",
+      "v_preventivo": 4550000.0,
+      "v_consuntivo": 2935905.31,
+      "diff_assoluta": -1614094.69,
+      "pct_realizzazione": 64.53,
+      "pct_scostamento": -35.47
+    }
+  ],
+  "spese_programma": [
+    {
+      "key": "p1_01",
+      "label": "Organi istituzionali",
+      "sub": "Missione 1 · Programma 01",
+      "v_preventivo": 1583841.64,
+      "v_consuntivo": 1307910.5,
+      "diff_assoluta": -275931.14,
+      "pct_realizzazione": 82.58,
+      "pct_scostamento": -17.42
+    },
+    {
+      "key": "p1_02",
+      "label": "Segreteria generale",
+      "sub": "Missione 1 · Programma 02",
+      "v_preventivo": 4564439.42,
+      "v_consuntivo": 3867733.28,
+      "diff_assoluta": -696706.14,
+      "pct_realizzazione": 84.74,
+      "pct_scostamento": -15.26
+    },
+    {
+      "key": "p1_03",
+      "label": "Gestione economica, finanziaria, programmazione e provveditorato",
+      "sub": "Missione 1 · Programma 03",
+      "v_preventivo": 1438562.34,
+      "v_consuntivo": 1391869.14,
+      "diff_assoluta": -46693.2,
+      "pct_realizzazione": 96.75,
+      "pct_scostamento": -3.25
+    },
+    {
+      "key": "p1_04",
+      "label": "Gestione delle entrate tributarie e servizi fiscali",
+      "sub": "Missione 1 · Programma 04",
+      "v_preventivo": 3113337.52,
+      "v_consuntivo": 2736887.94,
+      "diff_assoluta": -376449.58,
+      "pct_realizzazione": 87.91,
+      "pct_scostamento": -12.09
+    },
+    {
+      "key": "p1_05",
+      "label": "Gestione dei beni demaniali e patrimoniali",
+      "sub": "Missione 1 · Programma 05",
+      "v_preventivo": 1188328.76,
+      "v_consuntivo": 1168412.06,
+      "diff_assoluta": -19916.7,
+      "pct_realizzazione": 98.32,
+      "pct_scostamento": -1.68
+    },
+    {
+      "key": "p1_06",
+      "label": "Ufficio tecnico",
+      "sub": "Missione 1 · Programma 06",
+      "v_preventivo": 35688915.04,
+      "v_consuntivo": 7501671.4,
+      "diff_assoluta": -28187243.64,
+      "pct_realizzazione": 21.02,
+      "pct_scostamento": -78.98
+    },
+    {
+      "key": "p1_07",
+      "label": "Elezioni e consultazioni popolari - Anagrafe e stato civile",
+      "sub": "Missione 1 · Programma 07",
+      "v_preventivo": 1491772.18,
+      "v_consuntivo": 1271645.56,
+      "diff_assoluta": -220126.62,
+      "pct_realizzazione": 85.24,
+      "pct_scostamento": -14.76
+    },
+    {
+      "key": "p1_08",
+      "label": "Statistica e sistemi informativi",
+      "sub": "Missione 1 · Programma 08",
+      "v_preventivo": 471283.14,
+      "v_consuntivo": 459593.26,
+      "diff_assoluta": -11689.88,
+      "pct_realizzazione": 97.52,
+      "pct_scostamento": -2.48
+    },
+    {
+      "key": "p1_10",
+      "label": "Risorse umane",
+      "sub": "Missione 1 · Programma 10",
+      "v_preventivo": 330429.86,
+      "v_consuntivo": 327218.86,
+      "diff_assoluta": -3211.0,
+      "pct_realizzazione": 99.03,
+      "pct_scostamento": -0.97
+    },
+    {
+      "key": "p1_11",
+      "label": "Altri servizi generali",
+      "sub": "Missione 1 · Programma 11",
+      "v_preventivo": 7022628.3,
+      "v_consuntivo": 6298672.84,
+      "diff_assoluta": -723955.46,
+      "pct_realizzazione": 89.69,
+      "pct_scostamento": -10.31
+    },
+    {
+      "key": "p1_12",
+      "label": "Politica regionale unitaria per i servizi istituzionali, generali e di gestione (solo per le Regioni)",
+      "sub": "Missione 1 · Programma 12",
+      "v_preventivo": 28446769.1,
+      "v_consuntivo": 13165807.42,
+      "diff_assoluta": -15280961.68,
+      "pct_realizzazione": 46.28,
+      "pct_scostamento": -53.72
+    },
+    {
+      "key": "p3_01",
+      "label": "Polizia locale e amministrativa",
+      "sub": "Missione 3 · Programma 01",
+      "v_preventivo": 3251853.78,
+      "v_consuntivo": 3182218.9,
+      "diff_assoluta": -69634.88,
+      "pct_realizzazione": 97.86,
+      "pct_scostamento": -2.14
+    },
+    {
+      "key": "p3_03",
+      "label": "Politica regionale unitaria per l'ordine pubblico e la sicurezza (solo per le Regioni)",
+      "sub": "Missione 3 · Programma 03",
+      "v_preventivo": 1625926.89,
+      "v_consuntivo": 1591109.45,
+      "diff_assoluta": -34817.44,
+      "pct_realizzazione": 97.86,
+      "pct_scostamento": -2.14
+    },
+    {
+      "key": "p4_01",
+      "label": "Istruzione prescolastica",
+      "sub": "Missione 4 · Programma 01",
+      "v_preventivo": 1591607.22,
+      "v_consuntivo": 1591607.22,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p4_02",
+      "label": "Altri ordini di istruzione non universitaria",
+      "sub": "Missione 4 · Programma 02",
+      "v_preventivo": 5915922.1,
+      "v_consuntivo": 5695675.08,
+      "diff_assoluta": -220247.02,
+      "pct_realizzazione": 96.28,
+      "pct_scostamento": -3.72
+    },
+    {
+      "key": "p4_08",
+      "label": "Politica regionale unitaria per l'istruzione e il diritto allo studio (solo per le Regioni)",
+      "sub": "Missione 4 · Programma 08",
+      "v_preventivo": 3753764.66,
+      "v_consuntivo": 3643641.15,
+      "diff_assoluta": -110123.51,
+      "pct_realizzazione": 97.07,
+      "pct_scostamento": -2.93
+    },
+    {
+      "key": "p5_01",
+      "label": "Valorizzazione dei beni di interesse storico.",
+      "sub": "Missione 5 · Programma 01",
+      "v_preventivo": 340884.84,
+      "v_consuntivo": 340884.84,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p5_02",
+      "label": "Attività culturali e interventi diversi nel settore culturale",
+      "sub": "Missione 5 · Programma 02",
+      "v_preventivo": 744671.26,
+      "v_consuntivo": 742521.26,
+      "diff_assoluta": -2150.0,
+      "pct_realizzazione": 99.71,
+      "pct_scostamento": -0.29
+    },
+    {
+      "key": "p5_03",
+      "label": "Politica regionale unitaria per la tutela dei beni e delle attività culturali (solo per le Regioni)",
+      "sub": "Missione 5 · Programma 03",
+      "v_preventivo": 542778.05,
+      "v_consuntivo": 541703.05,
+      "diff_assoluta": -1075.0,
+      "pct_realizzazione": 99.8,
+      "pct_scostamento": -0.2
+    },
+    {
+      "key": "p6_01",
+      "label": "Sport e tempo libero",
+      "sub": "Missione 6 · Programma 01",
+      "v_preventivo": 1099792.2,
+      "v_consuntivo": 1099792.2,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p6_02",
+      "label": "Giovani",
+      "sub": "Missione 6 · Programma 02",
+      "v_preventivo": 14000.0,
+      "v_consuntivo": 14000.0,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p6_03",
+      "label": "Politica regionale unitaria per i giovani, lo sport e il tempo libero (solo per le Regioni)",
+      "sub": "Missione 6 · Programma 03",
+      "v_preventivo": 556896.1,
+      "v_consuntivo": 556896.1,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p7_01",
+      "label": "Sviluppo e valorizzazione del turismo",
+      "sub": "Missione 7 · Programma 01",
+      "v_preventivo": 150000.0,
+      "v_consuntivo": 150000.0,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p7_02",
+      "label": "Politica regionale unitaria per il turismo (solo per le Regioni)",
+      "sub": "Missione 7 · Programma 02",
+      "v_preventivo": 75000.0,
+      "v_consuntivo": 75000.0,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p8_01",
+      "label": "Urbanistica e assetto del territorio",
+      "sub": "Missione 8 · Programma 01",
+      "v_preventivo": 2838174.16,
+      "v_consuntivo": 1380541.24,
+      "diff_assoluta": -1457632.92,
+      "pct_realizzazione": 48.64,
+      "pct_scostamento": -51.36
+    },
+    {
+      "key": "p8_02",
+      "label": "Edilizia residenziale pubblica e locale e piani di edilizia economico-popolare",
+      "sub": "Missione 8 · Programma 02",
+      "v_preventivo": 4617363.26,
+      "v_consuntivo": 904654.66,
+      "diff_assoluta": -3712708.6,
+      "pct_realizzazione": 19.59,
+      "pct_scostamento": -80.41
+    },
+    {
+      "key": "p8_03",
+      "label": "Politica regionale unitaria per l'assetto del territorio e l'edilizia abitativa (solo per le Regioni)",
+      "sub": "Missione 8 · Programma 03",
+      "v_preventivo": 3727768.71,
+      "v_consuntivo": 1142597.95,
+      "diff_assoluta": -2585170.76,
+      "pct_realizzazione": 30.65,
+      "pct_scostamento": -69.35
+    },
+    {
+      "key": "p9_01",
+      "label": "Difesa del suolo",
+      "sub": "Missione 9 · Programma 01",
+      "v_preventivo": 95899.16,
+      "v_consuntivo": 0.0,
+      "diff_assoluta": -95899.16,
+      "pct_realizzazione": 0.0,
+      "pct_scostamento": -100.0
+    },
+    {
+      "key": "p9_02",
+      "label": "Tutela, valorizzazione e recupero ambientale",
+      "sub": "Missione 9 · Programma 02",
+      "v_preventivo": 4819241.56,
+      "v_consuntivo": 3290260.88,
+      "diff_assoluta": -1528980.68,
+      "pct_realizzazione": 68.27,
+      "pct_scostamento": -31.73
+    },
+    {
+      "key": "p9_03",
+      "label": "Rifiuti",
+      "sub": "Missione 9 · Programma 03",
+      "v_preventivo": 14992062.6,
+      "v_consuntivo": 14992056.16,
+      "diff_assoluta": -6.44,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": -0.0
+    },
+    {
+      "key": "p9_04",
+      "label": "Servizio idrico integrato",
+      "sub": "Missione 9 · Programma 04",
+      "v_preventivo": 15376340.8,
+      "v_consuntivo": 592932.08,
+      "diff_assoluta": -14783408.72,
+      "pct_realizzazione": 3.86,
+      "pct_scostamento": -96.14
+    },
+    {
+      "key": "p9_05",
+      "label": "Aree protette, parchi naturali, protezione naturalistica e forestazione",
+      "sub": "Missione 9 · Programma 05",
+      "v_preventivo": 236331.42,
+      "v_consuntivo": 236331.42,
+      "diff_assoluta": 0.0,
+      "pct_realizzazione": 100.0,
+      "pct_scostamento": 0.0
+    },
+    {
+      "key": "p9_09",
+      "label": "Politica regionale unitaria per lo sviluppo sostenibile e la tutela del territorio e l'ambiente (solo per le Regioni)",
+      "sub": "Missione 9 · Programma 09",
+      "v_preventivo": 17759937.77,
+      "v_consuntivo": 9555790.27,
+      "diff_assoluta": -8204147.5,
+      "pct_realizzazione": 53.81,
+      "pct_scostamento": -46.19
+    }
+  ]
+}

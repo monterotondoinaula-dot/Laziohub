@@ -1,0 +1,293 @@
+{
+  "entrate_tipologia": [
+    {
+      "key": "e10101",
+      "label": "Imposte, tasse e proventi assimilati",
+      "sub": "Titolo 1 · 1.0101",
+      "v25": 21267349.49,
+      "v26": 21424631.01
+    },
+    {
+      "key": "e10301",
+      "label": "Fondi perequativi da Amministrazioni Centrali",
+      "sub": "Titolo 1 · 1.0301",
+      "v25": 5419880.8,
+      "v26": 5367340.91
+    },
+    {
+      "key": "e20101",
+      "label": "Trasferimenti correnti da Amministrazioni pubbliche",
+      "sub": "Titolo 2 · 2.0101",
+      "v25": 9312297.56,
+      "v26": 7857157.92
+    },
+    {
+      "key": "e30100",
+      "label": "Vendita di beni e servizi e proventi derivanti dalla gestione dei beni",
+      "sub": "Titolo 3 · 3.0100",
+      "v25": 2897771.0,
+      "v26": 2726171.0
+    },
+    {
+      "key": "e30200",
+      "label": "Proventi derivanti dall'attività di controllo e repressione delle irregolarità",
+      "sub": "Titolo 3 · 3.0200",
+      "v25": 1007600.0,
+      "v26": 1007600.0
+    },
+    {
+      "key": "e30300",
+      "label": "Interessi attivi",
+      "sub": "Titolo 3 · 3.0300",
+      "v25": 3100.0,
+      "v26": 16100.0
+    },
+    {
+      "key": "e30500",
+      "label": "Rimborsi e altre entrate correnti",
+      "sub": "Titolo 3 · 3.0500",
+      "v25": 1537166.84,
+      "v26": 1452040.68
+    },
+    {
+      "key": "e40100",
+      "label": "Tributi in conto capitale",
+      "sub": "Titolo 4 · 4.0100",
+      "v25": 80000.0,
+      "v26": 50000.0
+    },
+    {
+      "key": "e40200",
+      "label": "Contributi agli investimenti",
+      "sub": "Titolo 4 · 4.0200",
+      "v25": 7034422.32,
+      "v26": 13565468.75
+    },
+    {
+      "key": "e40300",
+      "label": "Altri trasferimenti in conto capitale",
+      "sub": "Titolo 4 · 4.0300",
+      "v25": 50000.0,
+      "v26": 50000.0
+    },
+    {
+      "key": "e40400",
+      "label": "Entrate da alienazione di beni materiali e immateriali",
+      "sub": "Titolo 4 · 4.0400",
+      "v25": 1172899.98,
+      "v26": 2290000.0
+    },
+    {
+      "key": "e40500",
+      "label": "Altre entrate in conto capitale",
+      "sub": "Titolo 4 · 4.0500",
+      "v25": 1430000.0,
+      "v26": 1200000.0
+    },
+    {
+      "key": "e60300",
+      "label": "Accensione mutui e altri finanziamenti a medio lungo termine",
+      "sub": "Titolo 6 · 6.0300",
+      "v25": 1600000.0,
+      "v26": 1000000.0
+    },
+    {
+      "key": "e70100",
+      "label": "Anticipazioni da istituto tesoriere/cassiere",
+      "sub": "Titolo 7 · 7.0100",
+      "v25": 10000000.0,
+      "v26": 10000000.0
+    },
+    {
+      "key": "e90100",
+      "label": "Entrate per partite di giro",
+      "sub": "Titolo 9 · 9.0100",
+      "v25": 23700000.0,
+      "v26": 23700000.0
+    },
+    {
+      "key": "e90200",
+      "label": "Entrate per conto terzi",
+      "sub": "Titolo 9 · 9.0200",
+      "v25": 4550000.0,
+      "v26": 4550000.0
+    }
+  ],
+  "spese_programma": [
+    {
+      "key": "p1_01",
+      "label": "Organi istituzionali",
+      "sub": "Missione 1 · Programma 01",
+      "v25": 789720.82,
+      "v26": 828274.77
+    },
+    {
+      "key": "p1_02",
+      "label": "Segreteria generale",
+      "sub": "Missione 1 · Programma 02",
+      "v25": 2346419.71,
+      "v26": 1994111.47
+    },
+    {
+      "key": "p1_03",
+      "label": "Gestione economica, finanziaria, programmazione e provveditorato",
+      "sub": "Missione 1 · Programma 03",
+      "v25": 704781.17,
+      "v26": 623258.44
+    },
+    {
+      "key": "p1_04",
+      "label": "Gestione delle entrate tributarie e servizi fiscali",
+      "sub": "Missione 1 · Programma 04",
+      "v25": 1583168.76,
+      "v26": 1503553.86
+    },
+    {
+      "key": "p1_05",
+      "label": "Gestione dei beni demaniali e patrimoniali",
+      "sub": "Missione 1 · Programma 05",
+      "v25": 635164.38,
+      "v26": 773221.86
+    },
+    {
+      "key": "p1_06",
+      "label": "Ufficio tecnico",
+      "sub": "Missione 1 · Programma 06",
+      "v25": 17885932.44,
+      "v26": 10986575.23
+    },
+    {
+      "key": "p1_07",
+      "label": "Elezioni e consultazioni popolari - Anagrafe e stato civile",
+      "sub": "Missione 1 · Programma 07",
+      "v25": 723386.09,
+      "v26": 651369.66
+    },
+    {
+      "key": "p1_08",
+      "label": "Statistica e sistemi informativi",
+      "sub": "Missione 1 · Programma 08",
+      "v25": 265641.57,
+      "v26": 267274.32
+    },
+    {
+      "key": "p1_10",
+      "label": "Risorse umane",
+      "sub": "Missione 1 · Programma 10",
+      "v25": 180214.93,
+      "v26": 183062.21
+    },
+    {
+      "key": "p1_11",
+      "label": "Altri servizi generali",
+      "sub": "Missione 1 · Programma 11",
+      "v25": 3270541.28,
+      "v26": 2770360.33
+    },
+    {
+      "key": "p3_01",
+      "label": "Polizia locale e amministrativa",
+      "sub": "Missione 3 · Programma 01",
+      "v25": 1633426.89,
+      "v26": 1594081.22
+    },
+    {
+      "key": "p4_01",
+      "label": "Istruzione prescolastica",
+      "sub": "Missione 4 · Programma 01",
+      "v25": 798803.61,
+      "v26": 808340.75
+    },
+    {
+      "key": "p4_02",
+      "label": "Altri ordini di istruzione non universitaria",
+      "sub": "Missione 4 · Programma 02",
+      "v25": 2788177.17,
+      "v26": 11065319.15
+    },
+    {
+      "key": "p5_01",
+      "label": "Valorizzazione dei beni di interesse storico.",
+      "sub": "Missione 5 · Programma 01",
+      "v25": 150402.42,
+      "v26": 191000.0
+    },
+    {
+      "key": "p5_02",
+      "label": "Attività culturali e interventi diversi nel settore culturale",
+      "sub": "Missione 5 · Programma 02",
+      "v25": 427225.63,
+      "v26": 414470.2
+    },
+    {
+      "key": "p6_01",
+      "label": "Sport e tempo libero",
+      "sub": "Missione 6 · Programma 01",
+      "v25": 552896.1,
+      "v26": 1149574.81
+    },
+    {
+      "key": "p6_02",
+      "label": "Giovani",
+      "sub": "Missione 6 · Programma 02",
+      "v25": 7000.0,
+      "v26": 7000.0
+    },
+    {
+      "key": "p7_01",
+      "label": "Sviluppo e valorizzazione del turismo",
+      "sub": "Missione 7 · Programma 01",
+      "v25": 52718.48,
+      "v26": 150000.0
+    },
+    {
+      "key": "p8_01",
+      "label": "Urbanistica e assetto del territorio",
+      "sub": "Missione 8 · Programma 01",
+      "v25": 1406487.08,
+      "v26": 1594123.46
+    },
+    {
+      "key": "p8_02",
+      "label": "Edilizia residenziale pubblica e locale e piani di edilizia economico-popolare",
+      "sub": "Missione 8 · Programma 02",
+      "v25": 2308681.63,
+      "v26": 300000.0
+    },
+    {
+      "key": "p9_01",
+      "label": "Difesa del suolo",
+      "sub": "Missione 9 · Programma 01",
+      "v25": 47949.58,
+      "v26": 0.0
+    },
+    {
+      "key": "p9_02",
+      "label": "Tutela, valorizzazione e recupero ambientale",
+      "sub": "Missione 9 · Programma 02",
+      "v25": 2383588.54,
+      "v26": 2370900.0
+    },
+    {
+      "key": "p9_03",
+      "label": "Rifiuti",
+      "sub": "Missione 9 · Programma 03",
+      "v25": 7499031.3,
+      "v26": 7503970.4
+    },
+    {
+      "key": "p9_04",
+      "label": "Servizio idrico integrato",
+      "sub": "Missione 9 · Programma 04",
+      "v25": 7688170.4,
+      "v26": 57512.36
+    },
+    {
+      "key": "p9_05",
+      "label": "Aree protette, parchi naturali, protezione naturalistica e forestazione",
+      "sub": "Missione 9 · Programma 05",
+      "v25": 118165.71,
+      "v26": 72137.04
+    }
+  ]
+}

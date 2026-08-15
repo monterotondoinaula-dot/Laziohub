@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monterotondo RM | OpenBilanci Replica</title>
+
+  <!-- Bootstrap 3 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- jQuery & Bootstrap 3 JS -->
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- D3.js v3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #333;
+    }
+
+    .main-container {
+      background: #ffffff;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      max-width: 1200px;
+    }
+
+    /* Header Nav & Logo */
+    .ob-header {
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .ob-header .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header-logo {
+      height: 40px;
+      width: auto;
+      display: block;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .header-logo:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
+    }
+
+    .ob-header .title {
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ob-header .title span {
+      color: #888;
+      font-weight: normal;
+    }
+
+    /* Control Bar Box */
+    .controls-wrapper {
+      background: #f8f9fa;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Vis Area Canvas */
+    #chart-area {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      border: 1px solid #f0f0f0;
+      background-color: #fff;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    /* Reference Lines & Labels */
+    .ref-line {
+      stroke: #d0d0d0;
+      stroke-width: 1px;
+      stroke-dasharray: 3, 3;
+    }
+
+    .ref-label {
+      font-size: 10px;
+      fill: #888;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Legend */
+    .legend-box {
+      font-size: 9px;
+      fill: #666;
+    }
+
+    .scale-legend circle {
+      fill: none;
+      stroke: #bdc3c7;
+      stroke-width: 1px;
+      stroke-dasharray: 2, 2;
+    }
+
+    .scale-legend text {
+      font-size: 9px;
+      fill: #7f8c8d;
+    }
+
+    .node-text-val {
+      font-size: 9px;
+      fill: #ffffff;
+      text-anchor: middle;
+      pointer-events: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    }
+
+    /* Sidebar Metriche */
+    .sidebar-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .sidebar-card.selected-card {
+      border-left: 4px solid #2c3e50;
+      background: #fcfcfc;
+    }
+
+    .sidebar-card h4 {
+      font-size: 10px;
+      font-weight: bold;
+      color: #888;
+      text-transform: uppercase;
+      margin-top: 0;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-card .item-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      line-height: 1.2;
+      min-height: 15px;
+    }
+
+    .sidebar-card .amount {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2c3e50;
+      line-height: 1;
+    }
+
+    .sidebar-card .per-capita {
+      font-size: 11px;
+      font-weight: bold;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .sidebar-card .sub-info {
+      font-size: 10px;
+      font-weight: bold;
+      margin-top: 6px;
+      display: inline-block;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .sub-info.up {
+      background: #eafaf1;
+      color: #27ae60;
+    }
+
+    .sub-info.down {
+      background: #fdf0ed;
+      color: #e74c3c;
+    }
+
+    /* Top 5 Panels */
+    .top-panel {
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      background: #fff;
+      margin-top: 15px;
+    }
+
+    .top-panel-header {
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .top-panel-header.up {
+      background: #f4fbf7;
+      color: #27ae60;
+      border-left: 4px solid #27ae60;
+    }
+
+    .top-panel-header.down {
+      background: #fdf5f4;
+      color: #e74c3c;
+      border-left: 4px solid #e74c3c;
+    }
+
+    .top-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .top-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .top-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .top-list-item:hover {
+      background: #f8f9fa;
+    }
+
+    .top-list-item .item-name {
+      font-weight: 600;
+      color: #34495e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 240px;
+    }
+
+    .top-list-item .item-badge {
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-size: 10px;
+    }
+
+    .badge-up {
+      background: #eafaf1;
+      color: #27ae60;
+    }
+
+    .badge-down {
+      background: #fdf0ed;
+      color: #e74c3c;
+    }
+
+    .ob-tooltip {
+      position: absolute;
+      padding: 8px 12px;
+      background: rgba(44, 62, 80, 0.94);
+      color: #fff;
+      border-radius: 3px;
+      font-size: 11px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .ob-tooltip .tt-title {
+      font-weight: bold;
+      margin-bottom: 3px;
+      border-bottom: 1px solid #5d6d7e;
+      padding-bottom: 2px;
+    }
+
+    /* Footer Disclaimer */
+    .site-footer {
+      border-top: 1px solid #e0e0e0;
+      margin-top: 25px;
+      padding-top: 15px;
+      text-align: center;
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <!-- Header OpenBilanci con Logo LazioHub -->
+    <div class="row ob-header">
+      <div class="col-xs-8 title-wrap">
+        <a href="https://monterotondoinaula-dot.github.io/Laziohub/" target="_blank" title="Torna alla Home LazioHub">
+          <img src="opendatasicilia.jpg" alt="LazioHub Logo" class="header-logo">
+        </a>
+        <div class="title" id="header-title">MONTEROTONDO <span id="header-sub">RM | BILANCIO PREVISIONALE</span></div>
+        <button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#guideModal" style="margin-left: 5px;">
+          <span class="glyphicon glyphicon-question-sign" style="color: #2c3e50;"></span> Guida alla lettura
+        </button>
+      </div>
+      <div class="col-xs-4 text-right" style="margin-top: 8px;">
+        <label for="year-select" style="font-size:11px; color:#666; margin-right:4px;">ANNO:</label>
+        <select id="year-select" style="font-size:11px; padding: 2px 4px;"></select>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Colonna Sinistra (Grafico + Controlli) -->
+      <div class="col-xs-9">
+        
+        <!-- BARRA CONTROLLI BOOTSTRAP 3 -->
+        <div class="controls-wrapper">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <!-- 1. Switch Entrate / Spese -->
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-sm btn-primary active" id="btn-type-entrate" onclick="setMainType('entrate')">ENTRATE</button>
+              <button type="button" class="btn btn-sm btn-default" id="btn-type-spese" onclick="setMainType('spese')">SPESE</button>
+            </div>
+
+            <!-- 2. Switch Preventivo / Rendiconto -->
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-sm btn-success active" id="btn-doc-preventivo" onclick="setDocType('preventivo')">PREVISIONE</button>
+              <button type="button" class="btn btn-sm btn-default" id="btn-doc-rendiconto" onclick="setDocType('rendiconto')">CONSUNTIVO</button>
+            </div>
+          </div>
+
+          <!-- 3. Selettore Livelli -->
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-default active" id="btn-lvl-1" onclick="setLevel(1)">LIVELLO I</button>
+            <button type="button" class="btn btn-default" id="btn-lvl-2" onclick="setLevel(2)">LIVELLO II</button>
+            <button type="button" class="btn btn-default" id="btn-lvl-3" onclick="setLevel(3)">LIVELLO III</button>
+          </div>
+        </div>
+
+        <!-- Canvas SVG D3 -->
+        <div id="chart-area"></div>
+
+        <!-- Card Top 5 Voci -->
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="top-panel">
+              <div class="top-panel-header up" id="top-inc-header">
+                <span class="glyphicon glyphicon-arrow-up"></span> TOP 5 MAGGIORI INCREMENTI (%)
+              </div>
+              <ul class="top-list" id="top-increase-list"></ul>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="top-panel">
+              <div class="top-panel-header down" id="top-dec-header">
+                <span class="glyphicon glyphicon-arrow-down"></span> TOP 5 MAGGIORI DECREMENTI (%)
+              </div>
+              <ul class="top-list" id="top-decrease-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Metriche -->
+      <div class="col-xs-3">
+        <!-- Card Dettaglio Selezionato -->
+        <div class="sidebar-card selected-card" id="sb-detail-card">
+          <h4 id="sb-detail-title">DETTAGLIO SELEZIONATO</h4>
+          <div class="item-label" id="sb-detail-label">Seleziona una voce nel grafico</div>
+          <div class="amount" id="sb-detail-tot">€ --</div>
+          <div class="per-capita" id="sb-detail-pc">0,00 <small>PROCAPITE</small></div>
+          <div class="sub-info down" id="sb-detail-var">0.0% SUL PRECEDENTE</div>
+        </div>
+
+        <!-- Card Entrate Totali -->
+        <div class="sidebar-card">
+          <h4 id="sb-entrate-title">ENTRATE - TOTALE PREVISTO</h4>
+          <div class="amount" id="sb-entrate-tot">€ 0 MLN</div>
+          <div class="per-capita" id="sb-entrate-pc">0,00 <small>PROCAPITE</small></div>
+          <div class="sub-info down" id="sb-entrate-var">0.0% SUL PRECEDENTE</div>
+        </div>
+
+        <!-- Card Spese Totali -->
+        <div class="sidebar-card">
+          <h4 id="sb-spese-title">SPESE - TOTALE PREVISTO</h4>
+          <div class="amount" id="sb-spese-tot">€ 0 MLN</div>
+          <div class="per-capita" id="sb-spese-pc">0,00 <small>PROCAPITE</small></div>
+          <div class="sub-info down" id="sb-spese-var">0.0% SUL PRECEDENTE</div>
+        </div>
+
+        <div class="text-right" style="font-size: 9px; color: #aaa; margin-top: 20px;">
+          replica per Monterotondo
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer con Disclaimer -->
+    <footer class="site-footer">
+      <p>Questo progetto è un'iniziativa open-source ispirata alla storica versione della piattaforma <strong>OpenBilanci</strong>.</p>
+    </footer>
+  </div>
+
+  <div id="ob-tooltip" class="ob-tooltip"></div>
+
+  <!-- Modal Guida alla Lettura -->
+  <div class="modal fade" id="guideModal" tabindex="-1" role="dialog" aria-labelledby="guideModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="guideModalLabel"><strong>Guida alla lettura del Grafico</strong></h4>
+        </div>
+        <div class="modal-body" style="font-size: 13px; line-height: 1.6;">
+          <div class="row">
+            <div class="col-sm-6">
+              <p><strong><span class="glyphicon glyphicon-resize-full"></span> Dimensione delle Bolle</strong><br>
+              Il raggio di ciascuna bolla è proporzionale all'importo economico. Più la bolla è grande, maggiore è il suo peso sul bilancio comunale.</p>
+
+              <p><strong><span class="glyphicon glyphicon-sort"></span> Posizione e Colore (Asse Y)</strong><br>
+              Le bolle sono distribuite in verticale in base alla <strong>variazione percentuale</strong> rispetto all'anno precedente (o al preventivo):</p>
+              <ul>
+                <li><strong style="color: #769d24;">In alto (Verde):</strong> Aumenti o entrate realizzate superiori al +25%.</li>
+                <li><strong style="color: #e0cb32;">Al centro (Giallo):</strong> Valori stabili o in linea con l'anno di confronto (tra -5% e +5%).</li>
+                <li><strong style="color: #ba3319;">In basso (Rosso):</strong> Forti riduzioni o minori entrate (oltre il -25%).</li>
+              </ul>
+            </div>
+
+            <div class="col-sm-6">
+              <p><strong><span class="glyphicon glyphicon-filter"></span> Livelli di Dettaglio</strong><br>
+              Puoi passare da una vista sintetica a una analitica con i pulsanti in alto:</p>
+              <ul>
+                <li><strong>Livello I:</strong> Totale generale aggregato di Entrate o Spese.</li>
+                <li><strong>Livello II:</strong> Raggruppamento per Macro-voci (Titoli / Missioni).</li>
+                <li><strong>Livello III:</strong> Dettaglio analitico (Tipologie / Programmi).</li>
+              </ul>
+
+              <p><strong><span class="glyphicon glyphicon-hand-up"></span> Interattività</strong><br>
+              • <strong>Passa il mouse</strong> su una bolla per leggere gli importi esatti e le variazioni.<br>
+              • <strong>Clicca su una bolla</strong> per fissare i dettagli nella scheda laterale o per scendere al livello successivo.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Ho capito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let mainType = 'entrate';
+    let docType = 'preventivo';
+    let currentLevel = 1;
+    let selectedYear = "2026";
+    let manifestData = null;
+    let currentJsonData = null;
+    let selectedBubble = null;
+
+    let dataL1 = [];
+    let dataL2 = [];
+    let dataL3 = [];
+    let currentDataset = [];
+    let radiusScale = null;
+
+    const chartContainer = document.getElementById('chart-area');
+    const width = chartContainer ? chartContainer.clientWidth : 850;
+    const height = 520;
+
+    const svg = d3.select("#chart-area")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .on("click", function() {
+        selectBubble(null);
+      });
+
+    const yAumenti = height * 0.22;
+    const yStabili = height * 0.50;
+    const yRiduzioni = height * 0.78;
+
+    const yScale = d3.scale.linear()
+      .domain([0.35, 0.0, -0.35])
+      .range([height * 0.12, yStabili, height * 0.88])
+      .clamp(true);
+
+    function getColor(val) {
+      if (val >= 0.25) return "#769d24";
+      if (val > 0.05) return "#9ec033";
+      if (val >= -0.05) return "#e0cb32";
+      if (val > -0.25) return "#d96b43";
+      return "#ba3319";
+    }
+
+    const force = d3.layout.force()
+      .size([width - 80, height])
+      .gravity(0.01)
+      .friction(0.88);
+
+    let gNodes;
+
+    function formatCompactEuro(val) {
+      if (val >= 1000000) {
+        return "€ " + (val / 1000000).toFixed(1) + "M";
+      } else if (val >= 1000) {
+        return "€ " + Math.round(val / 1000) + "k";
+      }
+      return "€ " + Math.round(val);
+    }
+
+    function getValCurr(d, isRend) {
+      if (isRend) {
+        return d.v_consuntivo !== undefined ? d.v_consuntivo : (d.v_curr || 0);
+      }
+      return d.v_curr !== undefined ? d.v_curr : 0;
+    }
+
+    function getValPrev(d, isRend) {
+      if (isRend) {
+        return d.v_preventivo !== undefined ? d.v_preventivo : (d.v_prev || 0);
+      }
+      return d.v_prev !== undefined ? d.v_prev : 0;
+    }
+
+    d3.json("data/manifest.json", function(error, manifest) {
+      if (error) {
+        console.error("Errore data/manifest.json:", error);
+        return;
+      }
+      manifestData = manifest;
+
+      const select = d3.select("#year-select");
+      select.selectAll("option").remove();
+
+      if (manifest.anni_disponibili) {
+        manifest.anni_disponibili.forEach(anno => {
+          select.append("option").attr("value", String(anno)).text(anno);
+        });
+      }
+
+      selectedYear = String(manifest.default_year || "2026");
+      select.property("value", selectedYear);
+
+      select.on("change", function() {
+        selectedYear = String(this.value);
+        checkDocTypeAvailability();
+        loadYearData();
+      });
+
+      renderStaticElements();
+      checkDocTypeAvailability();
+      loadYearData();
+    });
+
+    function checkDocTypeAvailability() {
+      if (!manifestData || !manifestData.documenti_disponibili) return;
+
+      const avail = manifestData.documenti_disponibili[selectedYear] || ["preventivo"];
+      const btnRend = d3.select("#btn-doc-rendiconto");
+      const btnPrev = d3.select("#btn-doc-preventivo");
+
+      const hasRend = avail.includes("rendiconto");
+      const hasPrev = avail.includes("preventivo");
+
+      btnRend.property("disabled", !hasRend).style("opacity", hasRend ? 1 : 0.4);
+      btnPrev.property("disabled", !hasPrev).style("opacity", hasPrev ? 1 : 0.4);
+
+      if (docType === "preventivo" && !hasPrev && hasRend) {
+        setDocType('rendiconto');
+      } else if (docType === "rendiconto" && !hasRend && hasPrev) {
+        setDocType('preventivo');
+      }
+    }
+
+    function loadYearData() {
+      const fileName = (docType === 'rendiconto') ? `rendiconto_${selectedYear}.json` : `${selectedYear}.json`;
+
+      d3.json(`data/${fileName}`, function(error, data) {
+        if (error) {
+          console.error(`Errore nel caricamento di data/${fileName}:`, error);
+          return;
+        }
+
+        currentJsonData = data;
+        processData(data);
+        updateSidebarTotals(data);
+        updateTop5Lists();
+        setLevel(currentLevel);
+      });
+    }
+
+    function setMainType(type) {
+      mainType = type;
+      
+      d3.select("#btn-type-entrate")
+        .classed("btn-primary active", type === 'entrate')
+        .classed("btn-default", type !== 'entrate');
+
+      d3.select("#btn-type-spese")
+        .classed("btn-primary active", type === 'spese')
+        .classed("btn-default", type !== 'spese');
+
+      if (currentJsonData) {
+        processData(currentJsonData);
+        updateTop5Lists();
+        setLevel(currentLevel);
+      }
+    }
+
+    function setDocType(type) {
+      docType = type;
+
+      d3.select("#btn-doc-preventivo")
+        .classed("btn-success active", type === 'preventivo')
+        .classed("btn-default", type !== 'preventivo');
+
+      d3.select("#btn-doc-rendiconto")
+        .classed("btn-success active", type === 'rendiconto')
+        .classed("btn-default", type !== 'rendiconto');
+
+      loadYearData();
+    }
+
+    function processData(rawData) {
+      if (!rawData) return;
+
+      let items = [];
+      if (mainType === 'entrate') {
+        items = rawData.entrate_tipologia || rawData.entrate || [];
+      } else {
+        items = rawData.spese_programma || rawData.spese || [];
+      }
+
+      const isRend = (docType === 'rendiconto');
+
+      const maxVal = d3.max(items, d => getValCurr(d, isRend)) || 1000000;
+      radiusScale = d3.scale.sqrt().domain([0, maxVal]).range([9, 48]);
+
+      // Livello 3
+      dataL3 = items.map((item, i) => {
+        const v_curr = getValCurr(item, isRend);
+        const v_prev = getValPrev(item, isRend);
+        const diff = v_curr - v_prev;
+        const perc = v_prev > 0 ? (diff / v_prev) : 0;
+        const r = radiusScale(v_curr);
+        return {
+          id: "l3_" + i,
+          label: item.label || "Voce " + i,
+          sub: item.sub || "",
+          v_curr: v_curr,
+          v_prev: v_prev,
+          r: r,
+          targetY: yScale(perc),
+          val: perc,
+          x: (width / 2) + (Math.random() - 0.5) * 200,
+          y: yScale(perc) + (Math.random() - 0.5) * 20
+        };
+      });
+
+      // Livello 2
+      const groupedMap = d3.nest()
+        .key(d => (d.sub && d.sub.includes("·")) ? d.sub.split("·")[0].trim() : (d.sub || "Altre Voci"))
+        .entries(items);
+
+      dataL2 = groupedMap.map((g, i) => {
+        const totCurr = d3.sum(g.values, d => getValCurr(d, isRend));
+        const totPrev = d3.sum(g.values, d => getValPrev(d, isRend));
+        const diff = totCurr - totPrev;
+        const perc = totPrev > 0 ? (diff / totPrev) : 0;
+        const r = radiusScale(totCurr);
+        return {
+          id: "l2_" + i,
+          label: g.key,
+          sub: `${g.values.length} Voce/i incluse`,
+          v_curr: totCurr,
+          v_prev: totPrev,
+          r: Math.max(16, r),
+          targetY: yScale(perc),
+          val: perc,
+          x: (width / 2) + (Math.random() - 0.5) * 150,
+          y: yScale(perc)
+        };
+      });
+
+      // Livello 1
+      const totCurrAll = d3.sum(items, d => getValCurr(d, isRend));
+      const totPrevAll = d3.sum(items, d => getValPrev(d, isRend));
+      const diffAll = totCurrAll - totPrevAll;
+      const percAll = totPrevAll > 0 ? (diffAll / totPrevAll) : 0;
+
+      dataL1 = [{
+        id: "root",
+        label: `TOTALE ${mainType.toUpperCase()} COMUNALI`,
+        sub: "Comune di Monterotondo",
+        v_curr: totCurrAll,
+        v_prev: totPrevAll,
+        r: 58,
+        targetY: yScale(percAll),
+        val: percAll,
+        x: width / 2,
+        y: yScale(percAll)
+      }];
+
+      updateSizeLegend(maxVal);
+    }
+
+    function updateSizeLegend(maxVal) {
+      svg.selectAll("g.scale-legend").remove();
+
+      if (!radiusScale) return;
+
+      const refValue = maxVal >= 5000000 ? 5000000 : 1000000;
+      const refRadius = radiusScale(refValue);
+      const labelText = refValue >= 1000000 ? (refValue / 1000000) + " MLN €" : (refValue / 1000) + "k €";
+
+      const scaleGroup = svg.append("g")
+        .attr("class", "scale-legend")
+        .attr("transform", `translate(70, ${height - 45})`);
+
+      scaleGroup.append("circle")
+        .attr("cx", 0)
+        .attr("cy", 0)
+        .attr("r", refRadius);
+
+      scaleGroup.append("line")
+        .attr("x1", 0)
+        .attr("y1", -refRadius)
+        .attr("x2", 45)
+        .attr("y2", -refRadius)
+        .attr("stroke", "#bdc3c7")
+        .attr("stroke-dasharray", "2,2");
+
+      scaleGroup.append("text")
+        .attr("x", 50)
+        .attr("y", -refRadius + 3)
+        .text("RIFERIMENTO: " + labelText);
+    }
+
+    function updateSidebarTotals(data) {
+      if (!manifestData || !data) return;
+
+      const pop = manifestData.popolazione || 41200;
+      const entrateItems = data.entrate_tipologia || data.entrate || [];
+      const speseItems = data.spese_programma || data.spese || [];
+      const isRend = (docType === 'rendiconto');
+
+      const totEntrate = d3.sum(entrateItems, d => getValCurr(d, isRend));
+      const prevEntrate = d3.sum(entrateItems, d => getValPrev(d, isRend));
+      const totSpese = d3.sum(speseItems, d => getValCurr(d, isRend));
+      const prevSpese = d3.sum(speseItems, d => getValPrev(d, isRend));
+
+      const varEntrate = prevEntrate > 0 ? ((totEntrate - prevEntrate) / prevEntrate * 100).toFixed(2) : "0.00";
+      const varSpese = prevSpese > 0 ? ((totSpese - prevSpese) / prevSpese * 100).toFixed(2) : "0.00";
+
+      const annoRef = data.anno || selectedYear;
+      const labelDoc = isRend ? "CONSUNTIVO" : "PREVISIONALE";
+      const subInfoLabel = isRend ? "RISPETTO A PREVISIONE" : `SUL ${data.anno_confronto || 'PRECEDENTE'}`;
+
+      d3.select("#header-title").html(`MONTEROTONDO <span id="header-sub">RM | BILANCIO ${labelDoc} ${annoRef}</span>`);
+
+      d3.select("#sb-entrate-title").text(isRend ? "ENTRATE - TOTALE EFFETTIVO" : "ENTRATE - TOTALE PREVISTO");
+      d3.select("#sb-spese-title").text(isRend ? "SPESE - TOTALE EFFETTIVO" : "SPESE - TOTALE PREVISTO");
+
+      d3.select("#sb-entrate-tot").text("€ " + (totEntrate / 1000000).toFixed(2) + " MLN");
+      d3.select("#sb-entrate-pc").html((totEntrate / pop).toFixed(2) + " <small>PROCAPITE</small>");
+      d3.select("#sb-entrate-var")
+        .text(`${varEntrate >= 0 ? '+' : ''}${varEntrate}% ${subInfoLabel}`)
+        .attr("class", `sub-info ${varEntrate >= 0 ? 'up' : 'down'}`);
+
+      d3.select("#sb-spese-tot").text("€ " + (totSpese / 1000000).toFixed(2) + " MLN");
+      d3.select("#sb-spese-pc").html((totSpese / pop).toFixed(2) + " <small>PROCAPITE</small>");
+      d3.select("#sb-spese-var")
+        .text(`${varSpese >= 0 ? '+' : ''}${varSpese}% ${subInfoLabel}`)
+        .attr("class", `sub-info ${varSpese >= 0 ? 'up' : 'down'}`);
+    }
+
+    function updateSidebarDetail(d) {
+      if (!d) {
+        const levelNames = ["LIVELLO I (TOTALE)", "LIVELLO II (MACRO-VOCI)", "LIVELLO III (DETTAGLIO)"];
+        d3.select("#sb-detail-title").text("SELEZIONE " + levelNames[currentLevel - 1]);
+        d3.select("#sb-detail-label").text("Clicca su una bolla per i dettagli");
+        d3.select("#sb-detail-tot").text("€ --");
+        d3.select("#sb-detail-pc").html("0,00 <small>PROCAPITE</small>");
+        d3.select("#sb-detail-var").text("0.0% SUL PRECEDENTE").attr("class", "sub-info down");
+        return;
+      }
+
+      const pop = (manifestData && manifestData.popolazione) ? manifestData.popolazione : 41200;
+      const isRend = (docType === 'rendiconto');
+
+      let formattedAmount = (d.v_curr >= 1000000) 
+        ? "€ " + (d.v_curr / 1000000).toFixed(2) + " MLN" 
+        : "€ " + Math.round(d.v_curr).toLocaleString("it-IT");
+
+      const pc = (d.v_curr / pop).toFixed(2);
+      const varPerc = (d.val * 100).toFixed(2);
+      const subInfoLabel = isRend ? "SUL PREVENTIVO" : "SUL PRECEDENTE";
+
+      d3.select("#sb-detail-title").text("DETTAGLIO SELEZIONATO");
+      d3.select("#sb-detail-label").text(d.label);
+      d3.select("#sb-detail-tot").text(formattedAmount);
+      d3.select("#sb-detail-pc").html(pc + " <small>PROCAPITE</small>");
+
+      d3.select("#sb-detail-var")
+        .text(`${varPerc >= 0 ? '+' : ''}${varPerc}% ${subInfoLabel}`)
+        .attr("class", `sub-info ${varPerc >= 0 ? 'up' : 'down'}`);
+    }
+
+    function selectBubble(d) {
+      selectedBubble = d;
+
+      gNodes.selectAll("circle.data-node")
+        .style("stroke", node => (node === d) ? "#2c3e50" : "none")
+        .style("stroke-width", node => (node === d) ? "3px" : "0px")
+        .style("opacity", node => (!d || node === d) ? 1.0 : 0.75);
+
+      updateSidebarDetail(d);
+    }
+
+    function updateTop5Lists() {
+      if (!dataL3 || dataL3.length === 0) return;
+
+      const validItems = dataL3.filter(d => d.v_prev > 0);
+      const isRend = (docType === 'rendiconto');
+
+      d3.select("#top-inc-header").html(
+        `<span class="glyphicon glyphicon-arrow-up"></span> ${isRend ? 'TOP 5 MAGGIORI REALIZZAZIONI (%)' : 'TOP 5 MAGGIORI INCREMENTI (%)'}`
+      );
+      d3.select("#top-dec-header").html(
+        `<span class="glyphicon glyphicon-arrow-down"></span> ${isRend ? 'TOP 5 MAGGIORI SCOSTAMENTI NEGATIVI (%)' : 'TOP 5 MAGGIORI DECREMENTI (%)'}`
+      );
+
+      const sortedInc = [...validItems].sort((a, b) => b.val - a.val).slice(0, 5);
+      const sortedDec = [...validItems].sort((a, b) => a.val - b.val).slice(0, 5);
+
+      renderTopList("#top-increase-list", sortedInc, true);
+      renderTopList("#top-decrease-list", sortedDec, false);
+    }
+
+    function renderTopList(selector, items, isIncrease) {
+      const ul = d3.select(selector);
+      ul.selectAll("li").remove();
+
+      if (items.length === 0) {
+        ul.append("li").attr("class", "top-list-item").text("Nessun dato disponibile");
+        return;
+      }
+
+      items.forEach(d => {
+        const percText = (d.val * 100).toFixed(1) + "%";
+        const li = ul.append("li")
+          .attr("class", "top-list-item")
+          .on("click", () => {
+            setLevel(3);
+            selectBubble(d);
+          });
+
+        li.append("span")
+          .attr("class", "item-name")
+          .text(d.label)
+          .attr("title", d.label);
+
+        li.append("span")
+          .attr("class", `item-badge ${isIncrease ? 'badge-up' : 'badge-down'}`)
+          .text(`${d.val >= 0 ? '+' : ''}${percText}`);
+      });
+    }
+
+    function renderStaticElements() {
+      svg.selectAll("*").remove();
+
+      const lines = [
+        { y: yAumenti, text: "AUMENTI / REALIZZAZIONI > 25%" },
+        { y: yStabili, text: "VALORI IN LINEA" },
+        { y: yRiduzioni, text: "RIDUZIONI / SCOSTAMENTI > 25%" }
+      ];
+
+      lines.forEach(l => {
+        svg.append("line")
+          .attr("class", "ref-line")
+          .attr("x1", 20)
+          .attr("x2", width - 80)
+          .attr("y1", l.y)
+          .attr("y2", l.y);
+
+        svg.append("text")
+          .attr("class", "ref-label")
+          .attr("x", 20)
+          .attr("y", l.y - 6)
+          .text(l.text);
+      });
+
+      const legendData = [
+        { color: "#769d24", label: "> +25%" },
+        { color: "#9ec033", label: "+5%" },
+        { color: "#e0cb32", label: "0%" },
+        { color: "#d96b43", label: "-5%" },
+        { color: "#ba3319", label: "-25%" }
+      ];
+
+      const legendGroup = svg.append("g")
+        .attr("transform", `translate(${width - 65}, ${height * 0.28})`);
+
+      legendData.forEach((d, i) => {
+        legendGroup.append("rect")
+          .attr("x", 0)
+          .attr("y", i * 16)
+          .attr("width", 12)
+          .attr("height", 12)
+          .attr("fill", d.color);
+
+        legendGroup.append("text")
+          .attr("class", "legend-box")
+          .attr("x", 18)
+          .attr("y", i * 16 + 10)
+          .text(d.label);
+      });
+
+      gNodes = svg.append("g");
+    }
+
+    function updateChart(dataset) {
+      if (!gNodes || !dataset) return;
+      currentDataset = dataset;
+      selectBubble(null);
+
+      const isRend = (docType === 'rendiconto');
+
+      const nodes = gNodes.selectAll("g.node-group")
+        .data(dataset, d => d.id);
+
+      nodes.exit()
+        .transition()
+        .duration(200)
+        .remove();
+
+      const newNodes = nodes.enter()
+        .append("g")
+        .attr("class", "node-group")
+        .style("cursor", "pointer")
+        .on("mouseover", function(d) {
+          const perc = (d.val * 100).toFixed(1);
+          const formatEuro = v => "€ " + Math.round(v).toLocaleString("it-IT");
+          
+          const labelCurr = isRend ? "Consuntivo:" : "Previsione:";
+          const labelPrev = isRend ? "Preventivo:" : "Prec.:";
+          const labelDiff = isRend ? "Scostamento:" : "Variazione:";
+
+          d3.select("#ob-tooltip")
+            .html(`
+              <div class="tt-title">${d.label}</div>
+              <div style="font-size:10px; color:#bdc3c7; margin-bottom:4px;">${d.sub || ''}</div>
+              <div>${labelPrev} <strong>${formatEuro(d.v_prev)}</strong></div>
+              <div>${labelCurr} <strong>${formatEuro(d.v_curr)}</strong></div>
+              <div>${labelDiff} <strong>${perc >= 0 ? '+' : ''}${perc}%</strong></div>
+            `)
+            .style("opacity", 1);
+        })
+        .on("mousemove", function() {
+          d3.select("#ob-tooltip")
+            .style("left", (d3.event.pageX + 15) + "px")
+            .style("top", (d3.event.pageY - 20) + "px");
+        })
+        .on("mouseout", function() {
+          d3.select("#ob-tooltip").style("opacity", 0);
+        })
+        .on("click", function(d) {
+          if (d3.event) d3.event.stopPropagation();
+
+          selectBubble(d);
+
+          if (currentLevel === 1) {
+            setLevel(2);
+          } else if (currentLevel === 2) {
+            setLevel(3);
+          }
+        });
+
+      newNodes.append("circle")
+        .attr("class", "data-node")
+        .attr("r", 0);
+
+      newNodes.append("text")
+        .attr("class", "node-text-val")
+        .attr("dy", "0.3em");
+
+      nodes.select("circle")
+        .attr("fill", d => getColor(d.val))
+        .transition()
+        .duration(400)
+        .attr("r", d => d.r);
+
+      nodes.select("text")
+        .text(d => (d.r >= 18) ? formatCompactEuro(d.v_curr) : "")
+        .style("opacity", d => (d.r >= 18) ? 1 : 0);
+
+      force.nodes(dataset)
+        .charge(d => -Math.pow(d.r, 1.7) * 1.1)
+        .on("tick", function(e) {
+          const kY = e.alpha * 0.12;
+          const kX = e.alpha * 0.05;
+
+          dataset.forEach(d => {
+            d.y += (d.targetY - d.y) * kY;
+            d.x += ((width / 2 - 20) - d.x) * kX;
+          });
+
+          nodes.each(collide(0.3));
+
+          nodes.attr("transform", d => {
+            const clampedX = Math.max(d.r + 20, Math.min(width - 80 - d.r, d.x));
+            const clampedY = Math.max(d.r + 10, Math.min(height - 10 - d.r, d.y));
+            return `translate(${clampedX}, ${clampedY})`;
+          });
+        })
+        .start();
+    }
+
+    function collide(alpha) {
+      const quadtree = d3.geom.quadtree(currentDataset);
+      return function(d) {
+        let r = d.r + 4,
+          nx1 = d.x - r,
+          nx2 = d.x + r,
+          ny1 = d.y - r,
+          ny2 = d.y + r;
+        quadtree.visit(function(quad, x1, y1, x2, y2) {
+          if (quad.point && (quad.point !== d)) {
+            let x = d.x - quad.point.x,
+              y = d.y - quad.point.y,
+              l = Math.sqrt(x * x + y * y),
+              rMin = d.r + quad.point.r + 3;
+            if (l < rMin) {
+              l = (l - rMin) / l * alpha;
+              d.x -= x *= l;
+              d.y -= y *= l;
+              quad.point.x += x;
+              quad.point.y += y;
+            }
+          }
+          return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+        });
+      };
+    }
+
+    function setLevel(lvl) {
+      currentLevel = lvl;
+      
+      d3.selectAll("[id^='btn-lvl-']").classed("active", false);
+      d3.select(`#btn-lvl-${lvl}`).classed("active", true);
+
+      if (lvl === 1) updateChart(dataL1);
+      else if (lvl === 2) updateChart(dataL2);
+      else if (lvl === 3) updateChart(dataL3);
+    }
+  </script>
+</body>
+</html>

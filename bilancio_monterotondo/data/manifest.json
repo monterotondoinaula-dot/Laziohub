@@ -1,0 +1,23 @@
+{
+  "comune": "Monterotondo",
+  "provincia": "RM",
+  "popolazione": 41200,
+  "default_year": 2026,
+  "anni_disponibili": [
+    2026,
+    2025,
+    2024,
+    2023
+  ],
+  "documenti_disponibili": {
+    "2025": [
+      "rendiconto"
+    ],
+    "2024": [
+      "rendiconto"
+    ],
+    "2023": [
+      "rendiconto"
+    ]
+  }
+}
