@@ -7,45 +7,67 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f1720; color: #e8edf2; }
-  #app { display: flex; flex-direction: column; height: 100vh; }
-  header { padding: 10px 18px; background: #16202b; border-bottom: 1px solid #22303c; display: flex; align-items: center; gap: 12px; }
+  #app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+  header { padding: 8px 12px; background: #16202b; border-bottom: 1px solid #22303c; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   header a.logo-link { flex-shrink: 0; display: flex; align-items: center; }
-  header a.logo-link img { height: 40px; width: 40px; border-radius: 8px; transition: opacity 0.15s; }
+  header a.logo-link img { height: 32px; width: 32px; border-radius: 7px; transition: opacity 0.15s; }
   header a.logo-link:hover img { opacity: 0.8; }
-  header .title-block h1 { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
-  header .title-block p { font-size: 12px; color: #8fa3b3; }
-  #main { display: flex; flex: 1; overflow: hidden; }
-  #sidebar { width: 310px; background: #141e28; overflow-y: auto; border-right: 1px solid #22303c; flex-shrink: 0; }
-  #sidebar-header { padding: 12px 14px; border-bottom: 1px solid #22303c; position: sticky; top: 0; background: #141e28; z-index: 5; }
-  #sidebar-header button { width: 100%; padding: 8px; margin-bottom: 6px; background: #22303c; color: #cfd8e0; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; }
-  #sidebar-header button:hover { background: #2c3f4f; }
+  header .title-block { min-width: 0; }
+  header .title-block h1 { font-size: 14px; font-weight: 700; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header .title-block p { font-size: 10px; color: #8fa3b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Toggle mappa/elenco per mobile */
+  #mobile-tabs { display: none; background: #16202b; border-bottom: 1px solid #22303c; flex-shrink: 0; }
+  #mobile-tabs button { flex: 1; padding: 12px; background: none; border: none; color: #8fa3b3; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+  #mobile-tabs button.active { color: #ffffff; border-bottom-color: #4363d8; }
+
+  #main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+  #sidebar { width: 310px; background: #141e28; overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid #22303c; flex-shrink: 0; }
+  #sidebar-header { padding: 10px 14px; border-bottom: 1px solid #22303c; position: sticky; top: 0; background: #141e28; z-index: 5; }
+  #sidebar-header button { width: 100%; padding: 10px; margin-bottom: 6px; background: #22303c; color: #cfd8e0; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 600; min-height: 40px; }
+  #sidebar-header button:hover, #sidebar-header button:active { background: #2c3f4f; }
   .section-label { padding: 10px 14px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6f8496; letter-spacing: 0.5px; }
-  .route-item { padding: 10px 14px; border-bottom: 1px solid #1c2833; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s; }
-  .route-item:hover { background: #1c2833; }
+  .route-item { padding: 12px 14px; border-bottom: 1px solid #1c2833; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s; min-height: 44px; }
+  .route-item:hover, .route-item:active { background: #1c2833; }
   .route-item.active { background: #223244; }
-  .color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .color-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
   .color-dot.approx { border-radius: 3px; }
   .route-info { flex: 1; min-width: 0; }
-  .route-code { font-size: 12px; font-weight: 700; color: #ffffff; }
+  .route-code { font-size: 13px; font-weight: 700; color: #ffffff; }
   .route-name { font-size: 11px; color: #93a5b5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .badge-approx { font-size: 9px; background: #4a3410; color: #ffb84d; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
-  .badge-alias { font-size: 9px; background: #163a2e; color: #6fd88a; padding: 1px 5px; border-radius: 3px; margin-left: 6px; }
-  #map { flex: 1; }
+  .badge-approx { font-size: 9px; background: #4a3410; color: #ffb84d; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
+  .badge-alias { font-size: 9px; background: #163a2e; color: #6fd88a; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
+  #map { flex: 1; min-width: 0; }
   .leaflet-popup-content-wrapper { background: #1c2833; color: #e8edf2; }
   .leaflet-popup-tip { background: #1c2833; }
-  .stop-popup { font-size: 12px; }
-  .stop-popup b { font-size: 13px; }
-  .stop-popup .match-tag { color: #6fd88a; font-size: 10px; }
-  .stop-popup .new-tag { color: #ffb84d; font-size: 10px; }
-  #stops-toggle { padding: 10px 14px; border-bottom: 1px solid #22303c; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-  #footer-note { padding: 8px 14px; font-size: 10px; color: #64798c; border-top: 1px solid #22303c; line-height: 1.5; }
+  .stop-popup { font-size: 13px; }
+  .stop-popup b { font-size: 14px; }
+  .stop-popup .match-tag { color: #6fd88a; font-size: 11px; }
+  .stop-popup .new-tag { color: #ffb84d; font-size: 11px; }
+  #stops-toggle { padding: 12px 14px; border-bottom: 1px solid #22303c; display: flex; align-items: center; gap: 8px; font-size: 13px; min-height: 44px; }
+  #stops-toggle input { width: 18px; height: 18px; }
+  #footer-note { padding: 10px 14px; font-size: 10px; color: #64798c; border-top: 1px solid #22303c; line-height: 1.6; }
   #footer-note a { color: #6fb8d8; text-decoration: none; }
   #footer-note a:hover { text-decoration: underline; }
-  #schedule-note { padding: 10px 14px; font-size: 11px; color: #cfd8e0; background: #17222d; border-bottom: 1px solid #22303c; line-height: 1.5; }
+  #schedule-note { padding: 12px 14px; font-size: 12px; color: #cfd8e0; background: #17222d; border-bottom: 1px solid #22303c; line-height: 1.6; }
   #schedule-note a { color: #6fd88a; font-weight: 600; text-decoration: none; }
   #schedule-note a:hover { text-decoration: underline; }
+
+  /* Leaflet controls piu' grandi per touch */
+  .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; font-size: 18px !important; }
+
+  @media (max-width: 768px) {
+    header .title-block p { display: none; }
+    #mobile-tabs { display: flex; }
+    #main { flex-direction: column; }
+    #sidebar { width: 100%; height: 100%; border-right: none; display: none; }
+    #sidebar.mobile-active { display: block; }
+    #map { width: 100%; height: 100%; display: none; }
+    #map.mobile-active { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -59,6 +81,10 @@
       <p>Cotral (GTFS ufficiale, tratto interno a Monterotondo) + UdR 2 Astral (tracciati ricostruiti)</p>
     </div>
   </header>
+  <div id="mobile-tabs">
+    <button id="tabMapBtn" class="active">Mappa</button>
+    <button id="tabListBtn">Elenco linee</button>
+  </div>
   <div id="main">
     <div id="sidebar">
       <div id="sidebar-header">
@@ -230,6 +256,40 @@ document.getElementById("hideAllBtn").addEventListener("click", () => {
   Object.values(routeLayers).forEach((info) => { if (info.visible) { map.removeLayer(info.layer); info.visible = false; } });
   document.querySelectorAll(".route-item").forEach(el => el.classList.remove("active"));
 });
+
+// --- Gestione tab Mappa/Elenco per mobile ---
+const tabMapBtn = document.getElementById("tabMapBtn");
+const tabListBtn = document.getElementById("tabListBtn");
+const sidebarEl = document.getElementById("sidebar");
+const mapEl = document.getElementById("map");
+
+function showMapTab() {
+  tabMapBtn.classList.add("active");
+  tabListBtn.classList.remove("active");
+  mapEl.classList.add("mobile-active");
+  sidebarEl.classList.remove("mobile-active");
+  setTimeout(() => map.invalidateSize(), 50);
+}
+function showListTab() {
+  tabListBtn.classList.add("active");
+  tabMapBtn.classList.remove("active");
+  sidebarEl.classList.add("mobile-active");
+  mapEl.classList.remove("mobile-active");
+}
+tabMapBtn.addEventListener("click", showMapTab);
+tabListBtn.addEventListener("click", showListTab);
+
+function applyResponsiveDefault() {
+  if (window.innerWidth <= 768) {
+    showMapTab();
+  } else {
+    mapEl.classList.remove("mobile-active");
+    sidebarEl.classList.remove("mobile-active");
+  }
+}
+applyResponsiveDefault();
+window.addEventListener("resize", applyResponsiveDefault);
+map.invalidateSize();
 </script>
 </body>
 </html>
