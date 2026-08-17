@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raccolta differenziata nel Lazio – LazioHub</title>
+    <meta name="description" content="Mappa interattiva della raccolta differenziata dei rifiuti urbani nei comuni del Lazio, dal 2010 al 2024. Dati ISPRA, progetto LazioHub.">
+    <meta name="author" content="LazioHub">
+    <meta http-equiv="content-language" content="IT">
+    <meta name="robots" content="index,follow">
+    <meta name="creation_Date" content="19/04/2026>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+      <link rel="icon" href="favicon.png" type="image/png"/>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="css/style.css">
+   <link rel="icon" href="favicon.png" type="image/png"/>
+  
+ 
+
+	    <!-- Meta tags per social sharing pen Graph Protocol -->
+   <meta property="og:url" content="https://monterotondoinaula-dot.github.io/Laziohub/differenziata/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Raccolta differenziata nel Lazio – LazioHub">
+    <meta property="og:description" content="Mappa interattiva della raccolta differenziata dei rifiuti urbani nei comuni del Lazio, dal 2010 al 2024. Dati ISPRA, progetto LazioHub.">
+	<!-- twitter -->
+     <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="monterotondoinaula-dot.github.io">
+    <meta property="twitter:url" content="https://monterotondoinaula-dot.github.io/Laziohub/differenziata/">
+    <meta name="twitter:title" content="Raccolta differenziata nel Lazio – LazioHub">
+    <meta name="twitter:description" content="Mappa interattiva della raccolta differenziata dei rifiuti urbani nei comuni del Lazio, dal 2010 al 2024. Dati ISPRA, progetto LazioHub.">
+
+
+
+
+
+</head>
+<body data-theme="light">
+
+  <!-- ── HEADER ── -->
+  <header id="header">
+
+    <!-- Top row: display:contents su desktop → figli diretti di header -->
+    <div id="header-top-row">
+      <a href="https://monterotondoinaula-dot.github.io/Laziohub/" target="_blank" id="header-logo" style="font-family:'Newsreader',serif;font-weight:600;font-size:1.15rem;color:var(--ink);text-decoration:none;">
+        LazioHub
+      </a>
+      <div class="header-sep"></div>
+      <div id="header-brand">
+        <h1>Analisi Raccolta Differenziata</h1>
+        <span>Comuni del Lazio · 2010–2024</span>
+      </div>
+      <div id="stats-bar">
+        <div class="stat-item">
+          <span class="stat-value" id="stat-comuni">–</span>
+          <span class="stat-label">Comuni</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="stat-avg">–</span>
+          <span class="stat-label">Media RD</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="stat-above65">–</span>
+          <span class="stat-label">≥ 65%</span>
+        </div>
+      </div>
+      <!-- Controls (anno · provincia · comune · bottoni) -->
+      <div id="controls">
+        <div id="year-control">
+          <label for="year-slider">Anno: <strong id="year-display">2024</strong></label>
+          <input type="range" id="year-slider" min="2010" max="2024" value="2024" step="1">
+        </div>
+        <div class="header-sep"></div>
+        <div id="province-control">
+          <label for="province-select">Provincia</label>
+          <select id="province-select"></select>
+          <span id="island-note" class="hidden" style="font-size:0.72rem;color:var(--text-muted);margin-left:6px;white-space:nowrap;"></span>
+        </div>
+        <div class="header-sep"></div>
+        <div id="comune-control">
+          <label for="comune-select">Comune</label>
+          <select id="comune-select"><option value="">— Tutti —</option></select>
+        </div>
+        <div class="header-sep"></div>
+        <div id="header-actions">
+          <button class="btn-icon" id="btn-analisi" title="Analisi 2010-2024">📊</button>
+          <button class="btn-icon" id="btn-theme" title="Cambia tema">🌙</button>
+          <button class="btn-icon" id="btn-info" title="Informazioni">ℹ</button>
+        </div>
+      </div>
+      <!-- Mobile: solo hamburger -->
+      <div id="header-mobile-actions">
+        <button class="btn-icon" id="mobile-filters-btn" title="Filtri">☰</button>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- ── DRAWER MOBILE (fuori da header per evitare backdrop-filter containing block) ── -->
+  <div id="mobile-filters-drawer">
+    <div id="mobile-drawer-header">
+      <span>Filtri</span>
+      <button id="mobile-drawer-close">✕</button>
+    </div>
+    <div id="mobile-drawer-body"></div>
+  </div>
+
+  <!-- ── MAP ── -->
+  <div id="map"></div>
+
+  <!-- ── LOADING ── -->
+  <div id="loading">
+    <div id="loading-spinner"></div>
+    <div id="loading-text">Caricamento dati…</div>
+  </div>
+
+  <!-- ── LEGENDA (sinistra) ── -->
+  <div id="legend">
+    <div id="legend-title">% Raccolta Differenziata</div>
+    <div id="legend-scale"></div>
+    <div id="legend-no-data">
+      <div class="legend-swatch"></div>
+      <span>Dato non disponibile</span>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM-RIGHT: LOGO ── -->
+  <div id="bottom-right">
+    <a href="https://monterotondoinaula-dot.github.io/Laziohub/" target="_blank" id="header-logo">
+  <img src="img/logo.png" alt="LazioHub" height="42">
+    </a>
+  </div>
+
+  <!-- ── INFO PANEL ── -->
+  <div id="info-panel" class="hidden"></div>
+
+  <!-- ── DATA TABLE MODAL ── -->
+  <div id="data-modal" class="modal hidden">
+    <div id="data-modal-content">
+      <div id="dm-header">
+        <h2>Dati raccolta differenziata</h2>
+        <button class="modal-close" id="dm-close">✕</button>
+      </div>
+
+      <div id="dm-toolbar">
+        <div class="dm-toolbar-row">
+          <div class="dm-filter-group">
+            <label>Anno</label>
+            <div class="dm-drop-wrap" id="dm-year-wrap">
+              <button id="dm-btn-years" class="dm-btn">Tutti gli anni ▾</button>
+              <div id="dm-year-panel" class="hidden"></div>
+            </div>
+          </div>
+          <div class="dm-filter-group">
+            <label>Provincia</label>
+            <select id="dm-prov"></select>
+          </div>
+          <div class="dm-filter-group">
+            <label>Cerca comune</label>
+            <input type="text" id="dm-search" placeholder="Nome comune…">
+          </div>
+        </div>
+        <div class="dm-toolbar-row">
+          <div class="dm-col-toggle-wrap">
+            <button id="dm-btn-cols" class="dm-btn">Colonne ▾</button>
+            <div id="dm-col-panel" class="hidden"></div>
+          </div>
+          <div class="dm-export-wrap">
+            <span id="dm-count"></span>
+            <button id="dm-btn-csv" class="dm-btn dm-btn-accent">&#8595; CSV</button>
+            <button id="dm-btn-json" class="dm-btn dm-btn-accent">&#8595; JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="dm-table-wrap">
+        <table id="dm-table">
+          <thead id="dm-thead"></thead>
+          <tbody id="dm-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="dm-footer">
+        <span id="dm-sel-count">Nessuna riga selezionata — verranno esportate tutte</span>
+        <div id="dm-pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INFO MODAL ── -->
+  <div id="info-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close">✕</button>
+      <h2>Raccolta Differenziata nel Lazio</h2>
+      <p>
+        Mappa interattiva della percentuale di raccolta differenziata dei rifiuti urbani
+        nei comuni del Lazio, dal 2010 al 2024.
+      </p>
+      <h3>Come si usa</h3>
+      <ul>
+        <li>Usa il <strong>cursore Anno</strong> per cambiare l'anno di riferimento</li>
+        <li>Filtra per <strong>Provincia</strong> per fare zoom su un'area</li>
+        <li><strong>Passa il mouse</strong> su un comune per vedere la percentuale</li>
+        <li><strong>Clicca</strong> su un comune per il dettaglio e il trend storico</li>
+      </ul>
+      <h3>Legenda colori</h3>
+      <p>
+        Il colore indica la percentuale di raccolta differenziata:
+        <strong style="color:#cc0000">rosso</strong> (bassa RD) →
+        <strong style="color:#f0ee00">giallo</strong> (media) →
+        <strong style="color:#007700">verde</strong> (alta RD).<br>
+        La soglia di legge per i comuni italiani è <strong>65%</strong>.
+      </p>
+      <h3>Fonti dati</h3>
+      <ul>
+        <li><a href="https://www.catasto-rifiuti.isprambiente.it/index.php?pg=nazione" target="_blank" style="color:#1668DC">ISPRA – Catasto Rifiuti</a> – Rapporto Rifiuti Urbani (dati comunali annuali)</li>
+        <li>Confini comuni: ISTAT via <a href="https://confini-amministrativi.it" target="_blank" style="color:#1668DC">confini-amministrativi.it</a></li>
+        <li>PMTiles: <a href="https://gbvitrano.github.io/ANNCSU" target="_blank" style="color:#1668DC">gbvitrano.github.io/ANNCSU</a></li>
+      </ul>
+      <h3>Elaborazione</h3>
+      <p>Dati elaborati da file CSV ISPRA, unione anni 2010–2024.</p>
+	  
+	  <br>
+	  <hr>
+    <h3>Sviluppo tecnico</h3>
+    <p>Mappa realizzata nell'ambito del progetto <a class="info-credit-link" href="https://monterotondoinaula-dot.github.io/Laziohub/" target="_blank" rel="noopener">LazioHub</a>, ispirata nella struttura a <a class="info-credit-link" href="https://github.com/SiciliaHub/palermohub" target="_blank" rel="noopener">PalermoHub</a>, con il supporto di <a class="info-credit-link" href="https://claude.ai" target="_blank" rel="noopener">Claude AI</a> (Anthropic) per lo sviluppo del codice.</p>
+	       <h3>Licenza</h3> 
+	      <p>Il codice di questa applicazione è rilasciato sotto licenza <a class="info-credit-link" href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">CC BY-SA 4.0</a>. I dati mantengono la licenza della fonte originale (ISPRA – Catasto Rifiuti), citata sopra.</p>
+	  
+	  
+	  
+    </div>
+  </div>
+
+  <!-- ── ANALISI MODAL ── -->
+  <div id="analisi-modal" class="modal hidden">
+    <div class="modal-content modal-content-wide">
+      <button class="modal-close" id="analisi-close">✕</button>
+
+      <header class="an-hero">
+        <h2>Raccolta differenziata nel Lazio 2010-2024</h2>
+        <p class="an-subtitle">Cosa raccontano i dati ISPRA su 378 comuni e 15 anni</p>
+      </header>
+
+      <div class="an-kpis">
+        <div class="an-kpi">
+          <span class="an-kpi-value">56,2%</span>
+          <span class="an-kpi-label">% RD Lazio 2024</span>
+          <span class="an-kpi-delta">era 16,5% nel 2010 (×3,4)</span>
+        </div>
+        <div class="an-kpi">
+          <span class="an-kpi-value">202 / 350</span>
+          <span class="an-kpi-label">Comuni ≥ 65% nel 2024</span>
+          <span class="an-kpi-delta">erano solo 2 su 345 nel 2010</span>
+        </div>
+        <div class="an-kpi">
+          <span class="an-kpi-value">−54%</span>
+          <span class="an-kpi-label">Indifferenziato 2010→2024</span>
+          <span class="an-kpi-delta">da 2,80 Mt a 1,28 Mt</span>
+        </div>
+        <div class="an-kpi">
+          <span class="an-kpi-value">4 / 5</span>
+          <span class="an-kpi-label">Province sopra soglia 65%</span>
+          <span class="an-kpi-delta">Viterbo 67,3% · Roma 54,0%</span>
+        </div>
+      </div>
+
+      <section class="an-section">
+        <h3>Il dato che riassume tutto: dal 16% al 56%</h3>
+        <p>
+          Nel 2010 il Lazio raccoglieva in modo differenziato circa il <strong>16,5%</strong> dei
+          rifiuti urbani. Nel 2024 la quota è arrivata al <strong>56,2%</strong>: in quindici anni
+          il rapporto si è più che triplicato e l'indifferenziato avviato a smaltimento è
+          <strong>sceso del 54%</strong>.
+        </p>
+        <figure class="an-figure">
+          <img src="img/post-analisi/01_trend_regionale.png" alt="Andamento RD Lazio 2010-2024" loading="lazy">
+          <figcaption>Andamento della % di raccolta differenziata nel Lazio, dato regionale aggregato.</figcaption>
+        </figure>
+        <div class="an-table-wrap">
+          <table class="an-table">
+            <thead>
+              <tr><th>Anno</th><th>Popolazione</th><th>Totale RU (t)</th><th>Totale RD (t)</th><th>% RD</th><th>RU pro-capite (kg/ab)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>2010</td><td>5.728.688</td><td>3.399.808</td><td>561.988</td><td><strong>16,5%</strong></td><td>594</td></tr>
+              <tr><td>2015</td><td>5.888.472</td><td>3.023.402</td><td>1.134.109</td><td><strong>37,5%</strong></td><td>513</td></tr>
+              <tr><td>2017</td><td>5.896.693</td><td>2.961.867</td><td>1.353.906</td><td><strong>45,7%</strong></td><td>502</td></tr>
+              <tr><td>2020</td><td>5.720.796</td><td>2.815.268</td><td>1.476.774</td><td><strong>52,5%</strong></td><td>492</td></tr>
+              <tr><td>2022</td><td>5.707.112</td><td>2.859.769</td><td>1.557.976</td><td><strong>54,5%</strong></td><td>501</td></tr>
+              <tr><td>2024</td><td>5.710.272</td><td>2.916.082</td><td>1.639.647</td><td><strong>56,2%</strong></td><td>511</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="an-section">
+        <h3>La soglia del 65%: raggiunta da poco più della metà dei comuni</h3>
+        <p>
+          La legge italiana fissa al <strong>65%</strong> il livello minimo di raccolta differenziata
+          per ogni comune. Nel 2010 la rispettavano solo 2 comuni su 345 con dato disponibile; nel 2024 sono
+          <strong>202 su 350</strong> (57,7%). La crescita è stata costante, con un'accelerazione
+          netta tra il 2015 e il 2020.
+        </p>
+        <figure class="an-figure">
+          <img src="img/post-analisi/06_share_above_65.png" alt="% comuni sopra il 65%" loading="lazy">
+          <figcaption>Quota di comuni laziali che rispettano la soglia di legge.</figcaption>
+        </figure>
+        <div class="an-table-wrap">
+          <table class="an-table">
+            <thead><tr><th>Anno</th><th>Comuni con dato proprio</th><th>Comuni ≥ 65%</th><th>% in regola</th></tr></thead>
+            <tbody>
+              <tr><td>2010</td><td>345</td><td>2</td><td>0,6%</td></tr>
+              <tr><td>2015</td><td>321</td><td>39</td><td>12,1%</td></tr>
+              <tr><td>2017</td><td>327</td><td>88</td><td>26,9%</td></tr>
+              <tr><td>2018</td><td>334</td><td>122</td><td>36,5%</td></tr>
+              <tr><td>2020</td><td>338</td><td>189</td><td>55,9%</td></tr>
+              <tr><td>2022</td><td>346</td><td>197</td><td>56,9%</td></tr>
+              <tr><td>2024</td><td>350</td><td>202</td><td><strong>57,7%</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="an-section">
+        <h3>La geografia: cinque province, ritmi diversi</h3>
+        <p>
+          Quattro province su cinque superano oggi la soglia di legge. Il dato di Roma
+          merita una sottolineatura: pesa per oltre tre quarti dei rifiuti regionali ed è il più
+          indietro, anche se comunque appena sotto soglia. <strong>Senza la provincia di Roma, il Lazio nel 2024 sarebbe al 64,2%.</strong>
+        </p>
+        <figure class="an-figure">
+          <img src="img/post-analisi/03_province_2024.png" alt="Province Lazio 2024" loading="lazy">
+          <figcaption>Ranking delle cinque province laziali nel 2024.</figcaption>
+        </figure>
+        <div class="an-table-wrap">
+          <table class="an-table">
+            <thead><tr><th>Provincia</th><th>% RD 2024</th><th>Stato</th></tr></thead>
+            <tbody>
+              <tr><td>Viterbo</td><td><strong>67,3%</strong></td><td>🟢 Oltre la soglia</td></tr>
+              <tr><td>Latina</td><td><strong>64,3%</strong></td><td>🟡 Appena sotto</td></tr>
+              <tr><td>Frosinone</td><td><strong>63,7%</strong></td><td>🟡 Appena sotto</td></tr>
+              <tr><td>Rieti</td><td>59,1%</td><td>🟡 Sotto la soglia</td></tr>
+              <tr><td>Roma</td><td>54,0%</td><td>🟡 Sotto la soglia</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure class="an-figure">
+          <img src="img/post-analisi/02_trend_province.png" alt="Andamento per provincia" loading="lazy">
+          <figcaption>Andamento storico per provincia: Viterbo in testa, Roma appena più indietro.</figcaption>
+        </figure>
+      </section>
+
+      <section class="an-section">
+        <h3>Cosa raccoglie davvero il Lazio</h3>
+        <p>
+          Le 1,64 milioni di tonnellate raccolte separatamente nel 2024 sono dominate dall'<strong>organico</strong>
+          (27,8%), seguito da carta e cartone (24,1%) e vetro (12,5%).
+        </p>
+        <figure class="an-figure">
+          <img src="img/post-analisi/04_composizione_2024.png" alt="Composizione RD 2024" loading="lazy">
+          <figcaption>Composizione della raccolta differenziata regionale per frazione, 2024.</figcaption>
+        </figure>
+        <div class="an-table-wrap">
+          <table class="an-table">
+            <thead><tr><th>Frazione</th><th>Tonnellate 2024</th><th>Quota su RD</th></tr></thead>
+            <tbody>
+              <tr><td>Frazione umida (organico)</td><td>455.401</td><td><strong>27,8%</strong></td></tr>
+              <tr><td>Carta e cartone</td><td>395.535</td><td>24,1%</td></tr>
+              <tr><td>Vetro</td><td>205.110</td><td>12,5%</td></tr>
+              <tr><td>Verde</td><td>135.707</td><td>8,3%</td></tr>
+              <tr><td>Plastica</td><td>124.077</td><td>7,6%</td></tr>
+              <tr><td>Ingombranti a recupero</td><td>75.975</td><td>4,6%</td></tr>
+              <tr><td>Legno</td><td>53.887</td><td>3,3%</td></tr>
+              <tr><td>Pulizia stradale</td><td>45.549</td><td>2,8%</td></tr>
+              <tr><td>Altro</td><td>37.882</td><td>2,3%</td></tr>
+              <tr><td>Rifiuti C&amp;D</td><td>37.865</td><td>2,3%</td></tr>
+              <tr><td>Metallo</td><td>30.373</td><td>1,9%</td></tr>
+              <tr><td>RAEE</td><td>25.777</td><td>1,6%</td></tr>
+              <tr><td>Tessili</td><td>13.492</td><td>0,8%</td></tr>
+              <tr><td>Selettiva</td><td>3.017</td><td>0,2%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="an-section">
+        <h3>I comuni virtuosi e quelli in difficoltà</h3>
+        <p>
+          Considerando solo i comuni con almeno <strong>5.000 abitanti</strong>, il primo posto va a
+          <strong>Nepi (85,4%)</strong>, seguito a un soffio da Vetralla. Sei dei dieci più virtuosi sono
+          in provincia di Roma — la stessa provincia col dato medio più basso: anche qui il problema
+          non è territoriale ma di scala, con la Capitale che pesa molto sulla media.
+        </p>
+        <figure class="an-figure">
+          <img src="img/post-analisi/05_top_bottom.png" alt="Top e bottom comuni 2024" loading="lazy">
+          <figcaption>Top 10 e bottom 10 comuni con più di 5.000 abitanti, anno 2024.</figcaption>
+        </figure>
+        <div class="an-tables-2col">
+          <div class="an-table-wrap">
+            <h4>Top 10 — i più virtuosi</h4>
+            <table class="an-table">
+              <thead><tr><th>#</th><th>Comune</th><th>Prov.</th><th>% RD</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Nepi</td><td>VT</td><td><strong>85,4%</strong></td></tr>
+                <tr><td>2</td><td>Vetralla</td><td>VT</td><td>85,1%</td></tr>
+                <tr><td>3</td><td>Genzano di Roma</td><td>RM</td><td>84,9%</td></tr>
+                <tr><td>4</td><td>Manziana</td><td>RM</td><td>84,7%</td></tr>
+                <tr><td>5</td><td>Fondi</td><td>LT</td><td>82,9%</td></tr>
+                <tr><td>6</td><td>Sacrofano</td><td>RM</td><td>82,1%</td></tr>
+                <tr><td>7</td><td>Palestrina</td><td>RM</td><td>81,9%</td></tr>
+                <tr><td>8</td><td>Lanuvio</td><td>RM</td><td>80,4%</td></tr>
+                <tr><td>9</td><td>Montelibretti</td><td>RM</td><td>79,7%</td></tr>
+                <tr><td>10</td><td>Acquapendente</td><td>VT</td><td>79,3%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="an-table-wrap">
+            <h4>Bottom 10 — i più in difficoltà</h4>
+            <table class="an-table">
+              <thead><tr><th>#</th><th>Comune</th><th>Prov.</th><th>% RD</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Segni</td><td>RM</td><td>22,6%</td></tr>
+                <tr><td>2</td><td>Cisterna di Latina</td><td>LT</td><td>43,3%</td></tr>
+                <tr><td>3</td><td><strong>Roma</strong></td><td>RM</td><td><strong>48,0%</strong></td></tr>
+                <tr><td>4</td><td>Tarquinia</td><td>VT</td><td>50,4%</td></tr>
+                <tr><td>5</td><td>Santa Marinella</td><td>RM</td><td>51,6%</td></tr>
+                <tr><td>6</td><td>Veroli</td><td>FR</td><td>52,8%</td></tr>
+                <tr><td>7</td><td>Latina</td><td>LT</td><td>53,0%</td></tr>
+                <tr><td>8</td><td>Viterbo</td><td>VT</td><td>54,9%</td></tr>
+                <tr><td>9</td><td>Pontecorvo</td><td>FR</td><td>54,9%</td></tr>
+                <tr><td>10</td><td>Rieti</td><td>RI</td><td>55,1%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="an-section">
+        <h3>Cosa ci dicono questi numeri</h3>
+        <ol class="an-conclusions">
+          <li><strong>Il cambiamento c'è stato ed è stato profondo.</strong> Passare dal 16% al 56% in
+            quindici anni è una trasformazione strutturale, frutto del porta a porta, di un quadro
+            normativo più stringente e di nuove abitudini dei cittadini.</li>
+          <li><strong>Il gap residuo è concentrato, non diffuso.</strong> Poco più della metà dei comuni rispetta
+            la soglia. Il divario è spiegato soprattutto dal peso della città di Roma sulla media
+            provinciale e da alcune realtà periferiche con servizi sotto-dimensionati.</li>
+          <li><strong>Il prossimo passo è la qualità, non più solo la quantità.</strong> Ridurre la produzione
+            a monte, migliorare la purezza delle frazioni, costruire un'economia circolare locale.</li>
+        </ol>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ── THEMATIC LAYER PANEL ── -->
+  <div id="thematic-panel" class="hidden">
+    <!-- Lista + ricerca (espandibile verso l'alto) -->
+    <div id="thematic-dropdown" class="hidden">
+      <div id="thematic-search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--text-muted)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="thematic-search" placeholder="Cerca indicatore…" autocomplete="off">
+      </div>
+      <div id="thematic-list"></div>
+    </div>
+    <!-- Riga seleziona (toggle dropdown) -->
+    <div id="thematic-select-row">
+      <span id="thematic-current-label">Seleziona indicatore…</span>
+      <span id="thematic-chevron">▾</span>
+    </div>
+    <!-- Header fisso in basso -->
+    <div id="thematic-panel-header">
+      <span id="thematic-panel-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Analisi dati- Visualizza per...
+      </span>
+      <button id="thematic-panel-close">✕</button>
+    </div>
+  </div>
+
+  <!-- ── SCRIPTS ── -->
+  <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pmtiles@4/dist/pmtiles.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
