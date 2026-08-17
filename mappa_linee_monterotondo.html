@@ -42,6 +42,8 @@
   .badge-alias { font-size: 9px; background: #163a2e; color: #6fd88a; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
   #map { flex: 1; min-width: 0; }
   .leaflet-popup-content-wrapper { background: #1c2833; color: #e8edf2; }
+  .route-name-main { font-size: 13px; font-weight: 700; color: #ffffff; line-height: 1.3; }
+  .route-code-sub { font-size: 10px; color: #93a5b5; margin-top: 1px; }
   .leaflet-popup-tip { background: #1c2833; }
   .stop-popup { font-size: 13px; }
   .stop-popup b { font-size: 14px; }
@@ -144,32 +146,33 @@ function makeColorDot(color, isApprox) {
 GTFS_DATA.routes.forEach((route, idx) => {
   const color = COLORS[idx % COLORS.length];
   const latlngs = route.coords.map(c => [c[0], c[1]]);
-  const polyline = L.polyline(latlngs, { color: color, weight: 4, opacity: 0.85 });
-  polyline.bindPopup("<b>" + route.short_name + "</b><br>" + route.long_name);
+  const polyline = L.polyline(latlngs, { color: color, weight: 6, opacity: 0.95 });
+  polyline.bindPopup("<b>" + route.long_name + "</b><br>Codice: " + route.short_name);
   routeLayers[route.route_id] = { layer: polyline, color: color, visible: true };
   polyline.addTo(map);
 
   const aliasLabel = ALIAS_MAP[route.route_id];
+  const isAliased = !!aliasLabel;
 
   const item = document.createElement("div");
   item.className = "route-item active";
 
   const infoDiv = document.createElement("div");
   infoDiv.className = "route-info";
+  const nameDiv = document.createElement("div");
+  nameDiv.className = "route-name-main";
+  nameDiv.textContent = route.long_name;
   const codeDiv = document.createElement("div");
-  codeDiv.className = "route-code";
-  codeDiv.textContent = route.short_name;
-  if (aliasLabel) {
+  codeDiv.className = "route-code-sub";
+  codeDiv.textContent = "Cod. " + route.short_name;
+  if (isAliased) {
     const badge = document.createElement("span");
     badge.className = "badge-alias";
     badge.textContent = "= " + aliasLabel;
     codeDiv.appendChild(badge);
   }
-  const nameDiv = document.createElement("div");
-  nameDiv.className = "route-name";
-  nameDiv.textContent = route.long_name;
-  infoDiv.appendChild(codeDiv);
   infoDiv.appendChild(nameDiv);
+  infoDiv.appendChild(codeDiv);
 
   item.appendChild(makeColorDot(color, false));
   item.appendChild(infoDiv);
@@ -180,14 +183,20 @@ GTFS_DATA.routes.forEach((route, idx) => {
     else { info.layer.addTo(map); item.classList.add("active"); }
     info.visible = !info.visible;
   });
-  routeListEl.appendChild(item);
+
+  // Le linee con alias Astral confermato vanno nella sezione Astral, non Cotral
+  if (isAliased) {
+    astralRouteListEl.appendChild(item);
+  } else {
+    routeListEl.appendChild(item);
+  }
 });
 
 const astralStopMarkers = [];
 (GTFS_DATA.astral_routes || []).forEach((route, idx) => {
   const color = ASTRAL_COLORS[idx % ASTRAL_COLORS.length];
   const latlngs = route.coords.map(c => [c[0], c[1]]);
-  const polyline = L.polyline(latlngs, { color: color, weight: 4, opacity: 0.9, dashArray: "8, 6" });
+  const polyline = L.polyline(latlngs, { color: color, weight: 6, opacity: 0.95, dashArray: "10, 7" });
   polyline.bindPopup("<b>" + route.short_name + "</b><br>" + route.long_name + "<br><i style=\"color:#ffb84d\">Tracciato ricostruito, non ufficiale</i>");
   routeLayers[route.route_id] = { layer: polyline, color: color, visible: true };
   polyline.addTo(map);
@@ -197,18 +206,18 @@ const astralStopMarkers = [];
 
   const infoDiv = document.createElement("div");
   infoDiv.className = "route-info";
+  const nameDiv = document.createElement("div");
+  nameDiv.className = "route-name-main";
+  nameDiv.textContent = route.long_name;
   const codeDiv = document.createElement("div");
-  codeDiv.className = "route-code";
+  codeDiv.className = "route-code-sub";
   codeDiv.textContent = route.short_name;
   const badge = document.createElement("span");
   badge.className = "badge-approx";
   badge.textContent = "approx.";
   codeDiv.appendChild(badge);
-  const nameDiv = document.createElement("div");
-  nameDiv.className = "route-name";
-  nameDiv.textContent = route.long_name;
-  infoDiv.appendChild(codeDiv);
   infoDiv.appendChild(nameDiv);
+  infoDiv.appendChild(codeDiv);
 
   item.appendChild(makeColorDot(color, true));
   item.appendChild(infoDiv);
@@ -224,8 +233,8 @@ const astralStopMarkers = [];
   (route.stops || []).forEach(stop => {
     const isMatch = stop.is_cotral_match;
     const marker = L.circleMarker([stop.lat, stop.lon], {
-      radius: 6, color: "#ffffff", weight: 1,
-      fillColor: isMatch ? "#3cb44b" : "#ff9100", fillOpacity: 0.95
+      radius: 8, color: "#ffffff", weight: 2,
+      fillColor: isMatch ? "#3cb44b" : "#ff9100", fillOpacity: 0.98
     });
     const tag = isMatch ? "<span class=\"match-tag\">coincide con fermata Cotral</span>" : "<span class=\"new-tag\">nuova fermata (solo UdR2)</span>";
     marker.bindPopup("<div class=\"stop-popup\"><b>" + stop.name + "</b><br>" + tag + "</div>");
@@ -237,7 +246,7 @@ const astralStopMarkers = [];
 let stopsLayerGroup = L.layerGroup().addTo(map);
 GTFS_DATA.stops.forEach(stop => {
   const marker = L.circleMarker([stop.lat, stop.lon], {
-    radius: 5, color: "#ffffff", weight: 1, fillColor: "#ffcc00", fillOpacity: 0.9
+    radius: 7, color: "#ffffff", weight: 2, fillColor: "#ffcc00", fillOpacity: 0.95
   });
   marker.bindPopup("<div class=\"stop-popup\"><b>" + stop.name + "</b><br>ID: " + stop.stop_id + "</div>");
   marker.addTo(stopsLayerGroup);
