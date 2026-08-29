@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MonterotondoHub · PRG Interattivo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<style>
+  :root{
+    --blu:      #0078E1;
+    --blu-dark: #0a2540;
+    --ciano:    #69E1F0;
+    --verde:    #0FA55A;
+    --antracite:#2D3C4B;
+    --antracite-2:#1a242e;
+    --bg:       #f4f8fb;
+    --card:     #ffffff;
+    --text:     #16222c;
+    --text-dim: #5c6b78;
+    --border:   #dde6ec;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);}
+
+  /* ===== HEADER ===== */
+  header{
+    display:flex;align-items:center;gap:14px;
+    padding:10px 18px;
+    background:linear-gradient(90deg, var(--antracite-2), var(--antracite));
+    color:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.25);
+    position:relative; z-index:1000;
+  }
+  header img{height:40px;width:40px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(105,225,240,.5));}
+  header .title{display:flex;flex-direction:column;line-height:1.15;}
+  header .title b{font-size:16px;letter-spacing:.3px;}
+  header .title span{font-size:11.5px;color:var(--ciano);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  header .badge{
+    margin-left:auto;font-size:11px;color:var(--antracite);
+    background:var(--ciano); padding:4px 10px;border-radius:20px;font-weight:700;
+    letter-spacing:.3px;
+  }
+
+  /* ===== LAYOUT ===== */
+  #app{position:relative;height:calc(100% - 60px);}
+  #map{position:absolute;inset:0;}
+  #map .leaflet-tile-pane{filter:grayscale(35%) brightness(1.08) contrast(0.92);}
+
+  /* ===== LEGEND PANEL ===== */
+  #legend{
+    position:absolute; top:14px; left:14px; z-index:900;
+    background:rgba(255,255,255,.96); backdrop-filter:blur(6px);
+    border-radius:12px; box-shadow:0 4px 18px rgba(10,37,64,.18);
+    padding:14px 16px; max-width:220px;
+    border:1px solid var(--border);
+    font-size:12.5px;
+  }
+  #legend h3{margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--antracite); display:flex; align-items:center; gap:6px;}
+  #legend h3::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--verde);box-shadow:0 0 6px var(--verde);}
+  .legend-row{display:flex;align-items:center;gap:8px;margin:4px 0;cursor:pointer;padding:2px 4px;border-radius:6px;transition:background .15s;}
+  .legend-row:hover{background:#eef5fa;}
+  .legend-row.disabled{opacity:.35;}
+  .swatch{width:14px;height:14px;border-radius:4px;flex-shrink:0;border:1px solid rgba(0,0,0,.15);}
+  .legend-row span{color:var(--text-dim);}
+
+  /* ===== INFO / WELCOME PANEL ===== */
+  #intro{
+    position:absolute; bottom:14px; left:14px; z-index:900;
+    background:rgba(255,255,255,.96); backdrop-filter:blur(6px);
+    border-radius:12px; box-shadow:0 4px 18px rgba(10,37,64,.18);
+    padding:12px 16px; max-width:290px;
+    border:1px solid var(--border);
+    font-size:12px; color:var(--text-dim); line-height:1.5;
+  }
+  #intro b{color:var(--antracite);}
+
+  /* ===== SEARCH ===== */
+  #search-box{
+    position:absolute; top:14px; right:14px; z-index:900;
+    background:rgba(255,255,255,.96); backdrop-filter:blur(6px);
+    border-radius:12px; box-shadow:0 4px 18px rgba(10,37,64,.18);
+    padding:8px; border:1px solid var(--border);
+    display:flex; gap:6px; align-items:center;
+  }
+  #search-box input{
+    border:1px solid var(--border); border-radius:8px; padding:7px 10px;
+    font-size:13px; width:190px; outline:none; color:var(--text);
+  }
+  #search-box input:focus{border-color:var(--blu); box-shadow:0 0 0 3px rgba(0,120,225,.15);}
+  #search-box button{
+    background:var(--blu); color:#fff; border:none; border-radius:8px;
+    padding:7px 12px; font-size:13px; cursor:pointer; font-weight:600;
+  }
+  #search-box button:hover{background:#0064c2;}
+  #search-msg{position:absolute;top:58px;right:14px;z-index:900;font-size:12px;background:#fff3cd;color:#7a5c00;padding:6px 10px;border-radius:8px;display:none;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+
+  /* ===== POPUP ===== */
+  .leaflet-popup-content-wrapper{
+    border-radius:12px; box-shadow:0 8px 30px rgba(10,37,64,.35);
+    padding:0; overflow:hidden;
+  }
+  .leaflet-popup-content{margin:0; width:290px !important;}
+  .leaflet-popup-tip{background:#fff;}
+  .popup-head{
+    background:linear-gradient(120deg, var(--antracite-2), var(--antracite));
+    color:#fff; padding:12px 16px 10px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .popup-head .zona-code{font-size:19px; font-weight:800; letter-spacing:.3px;}
+  .popup-head .zona-tag{font-size:10.5px; background:var(--ciano); color:var(--antracite); padding:2px 8px; border-radius:12px; font-weight:700;}
+  .popup-body{padding:12px 16px 14px;}
+  .popup-desc{font-size:12.5px; color:var(--text-dim); margin-bottom:10px; line-height:1.45;}
+  .popup-grid{display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-bottom:8px;}
+  .popup-stat{background:#f4f8fb;border-radius:8px;padding:6px 8px;}
+  .popup-stat .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-dim);display:block;}
+  .popup-stat .v{font-size:14px;font-weight:700;color:var(--antracite);}
+  .popup-foot{font-size:10.5px;color:#93a2ae;border-top:1px dashed var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;}
+  .popup-foot b{color:var(--blu);}
+
+  /* ===== ATTRIBUTION override ===== */
+  .leaflet-control-attribution{font-size:10px;background:rgba(255,255,255,.8) !important;}
+
+  @media (max-width:640px){
+    header .title span{display:none;}
+    #legend{max-width:150px;font-size:11px;padding:10px 12px;}
+    #intro{display:none;}
+    #search-box input{width:120px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="MonterotondoHub logo">
+  <div class="title">
+    <b>MonterotondoHub</b>
+    <span>PRG Interattivo · rete LazioHub</span>
+  </div>
+  <div class="badge" id="count-badge">558 zone</div>
+</header>
+
+<div id="app">
+  <div id="map"></div>
+
+  <div id="legend">
+    <h3>Zone omogenee</h3>
+    <div id="legend-list"></div>
+  </div>
+
+  <div id="intro">
+    Clicca una zona per vedere <b>indici edilizi, altezze e distacchi</b> previsti dalle Norme Tecniche di Attuazione vigenti (D.G.R. 452/2015).
+    Dati geometrici: Città Metropolitana di Roma Capitale (accesso civico).
+  </div>
+
+  <div id="search-box">
+    <input type="text" id="search-input" placeholder="Cerca zona (es. B3, E1...)">
+    <button onclick="cercaZona()">Cerca</button>
+  </div>
+  <div id="search-msg"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+// ===== PALETTE per Vest (zona omogenea macro) =====
+const PALETTE = {
+  'A': '#8a2be2',  // centro storico - viola distintivo
+  'B': '#0078E1',  // completamento - blu tech (dominante, la piu' diffusa)
+  'C': '#0FA55A',  // espansione - verde
+  'D': '#e8622c',  // industria - arancio caldo (contrasto forte, attenzione)
+  'E': '#8bc34a',  // agricola - verde chiaro naturale
+  'F': '#69E1F0',  // servizi - ciano logo
+  'I': '#c0392b',  // vincoli speciali - rosso
+  'M': '#95a5a6',  // viabilita' - grigio neutro
+  'W': '#2D3C4B',  // acqua/altro - antracite
+};
+const PALETTE_LABELS = {
+  'A': 'A · Centro storico',
+  'B': 'B · Completamento',
+  'C': 'C · Espansione',
+  'D': 'D · Industria/Artigianato',
+  'E': 'E · Agricola',
+  'F': 'F · Servizi',
+  'I': 'I · Vincoli speciali',
+  'M': 'M · Viabilità',
+  'W': 'W · Altro/Infrastrutture',
+};
+
+function getColor(vest){ return PALETTE[vest] || '#999999'; }
+
+// ===== MAPPA =====
+const map = L.map('map', {zoomControl:false}).setView([42.0630, 12.6140], 14);
+
+L.control.zoom({position:'bottomright'}).addTo(map);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19
+}).addTo(map);
+
+let geoLayer;
+let allFeatures = [];
+const zoneLayers = {}; // codice zona -> [layers]
+
+function fmt(v, suffix=''){
+  if(v === null || v === undefined || v === '') return '—';
+  return v + suffix;
+}
+
+function popupContent(p){
+  const zona = p.Zona || '—';
+  const vestLabel = PALETTE_LABELS[p.Vest] || p.Vest || '';
+  let stats = '';
+  const campi = [
+    ['IF','If','mc/mq'], ['IT','It','mc/mq'], ['K','K',''], ['Hmax','H max','m'],
+    ['Hmin','H min','m'], ['DC','Dist. confini','m'], ['DF','Dist. edifici','m'],
+    ['DS','Dist. strada','m'], ['lotto_min','Lotto min.','mq'], ['Dt','Densità','ab/ha']
+  ];
+  campi.forEach(([key,label,unit])=>{
+    if(p[key] !== null && p[key] !== undefined && p[key] !== ''){
+      stats += `<div class="popup-stat"><span class="k">${label}</span><span class="v">${p[key]}${unit}</span></div>`;
+    }
+  });
+  if(stats === ''){
+    stats = `<div class="popup-stat" style="grid-column:1/-1"><span class="k">Indici</span><span class="v" style="font-size:12px;font-weight:500;">Non applicabili / da PUA specifico</span></div>`;
+  }
+
+  return `
+    <div class="popup-head">
+      <span class="zona-code">${zona}</span>
+      <span class="zona-tag">${vestLabel}</span>
+    </div>
+    <div class="popup-body">
+      <div class="popup-desc">${p.descrizione || 'Nessuna descrizione disponibile.'}</div>
+      <div class="popup-grid">${stats}</div>
+      <div class="popup-foot">
+        <span>Area: <b>${p.Area_ha ? p.Area_ha.toFixed(2)+' ha' : '—'}</b></span>
+        <span>${p.norma || '—'}</span>
+      </div>
+    </div>
+  `;
+}
+
+fetch('prg_data.geojson')
+  .then(r => r.json())
+  .then(data => {
+    allFeatures = data.features;
+    document.getElementById('count-badge').textContent = data.features.length + ' zone';
+
+    geoLayer = L.geoJSON(data, {
+      style: feature => {
+        const vest = feature.properties.Vest;
+        return {
+          fillColor: getColor(vest),
+          weight: 1,
+          opacity: 0.7,
+          color: '#1a242e',
+          fillOpacity: 0.68
+        };
+      },
+      onEachFeature: (feature, layer) => {
+        const vest = feature.properties.Vest;
+        if(!zoneLayers[vest]) zoneLayers[vest] = [];
+        zoneLayers[vest].push(layer);
+
+        layer.bindPopup(popupContent(feature.properties));
+
+        layer.on('mouseover', function(){
+          this.setStyle({weight:2.5, fillOpacity:0.8, color:'#0a2540'});
+          this.bringToFront();
+        });
+        layer.on('mouseout', function(){
+          geoLayer.resetStyle(this);
+        });
+      }
+    }).addTo(map);
+
+    buildLegend();
+  })
+  .catch(err => {
+    document.getElementById('intro').innerHTML = '<b style="color:#c0392b">Errore nel caricamento dei dati.</b> Verifica che il file prg_data.geojson sia presente nella stessa cartella.';
+    console.error(err);
+  });
+
+// ===== LEGENDA (con toggle visibilità) =====
+const legendState = {};
+function buildLegend(){
+  const container = document.getElementById('legend-list');
+  const vestPresenti = Object.keys(zoneLayers).sort((a,b) => zoneLayers[b].length - zoneLayers[a].length);
+  vestPresenti.forEach(vest => {
+    legendState[vest] = true;
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    row.id = 'legend-' + vest;
+    row.innerHTML = `<div class="swatch" style="background:${getColor(vest)}"></div><span>${PALETTE_LABELS[vest] || vest} (${zoneLayers[vest].length})</span>`;
+    row.onclick = () => toggleZona(vest);
+    container.appendChild(row);
+  });
+}
+
+function toggleZona(vest){
+  legendState[vest] = !legendState[vest];
+  const row = document.getElementById('legend-' + vest);
+  row.classList.toggle('disabled', !legendState[vest]);
+  zoneLayers[vest].forEach(layer => {
+    if(legendState[vest]){
+      map.addLayer(layer);
+    } else {
+      map.removeLayer(layer);
+    }
+  });
+}
+
+// ===== RICERCA =====
+function cercaZona(){
+  const query = document.getElementById('search-input').value.trim().toUpperCase();
+  const msg = document.getElementById('search-msg');
+  if(!query){ return; }
+
+  const match = allFeatures.find(f => (f.properties.Zona || '').toUpperCase() === query);
+  if(match){
+    const layer = L.geoJSON(match);
+    map.fitBounds(layer.getBounds(), {maxZoom:17, padding:[40,40]});
+    // apro il popup della prima occorrenza trovata tra i layer disegnati
+    const vest = match.properties.Vest;
+    const target = zoneLayers[vest].find(l => l.feature.properties.Mi_prinx === match.properties.Mi_prinx);
+    if(target){ setTimeout(()=>target.openPopup(), 400); }
+    msg.style.display = 'none';
+  } else {
+    msg.textContent = `Nessuna zona "${query}" trovata.`;
+    msg.style.display = 'block';
+    setTimeout(()=> msg.style.display='none', 3000);
+  }
+}
+document.getElementById('search-input').addEventListener('keypress', e => {
+  if(e.key === 'Enter') cercaZona();
+});
+</script>
+</body>
+</html>
